@@ -1,0 +1,98 @@
+version: "3.8"
+
+services:
+  server:
+    build: ./server
+    container_name: eureka-server
+    ports:
+      - "8761:8761"
+    networks:
+      - msp-network
+
+  postgres:
+    image: postgres:13
+    container_name: postgres
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./postgres-data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - msp-network
+
+  rabbitmq:
+    image: rabbitmq:3.10-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+    networks:
+      - msp-network
+
+  gateway:
+    build: ./gateway
+    container_name: api-gateway
+    ports:
+      - "8080:8080"
+    depends_on:
+      - server
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    networks:
+      - msp-network
+
+  autenticacao:
+    build: ./autenticacao
+    container_name: autenticacao-ms
+    depends_on:
+      - server
+      - postgres
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    networks:
+      - msp-network
+
+  agendamento:
+    build: ./agendamento
+    container_name: agendamento-ms
+    depends_on:
+      - server
+      - postgres
+      - rabbitmq
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    networks:
+      - msp-network
+
+  historico:
+    build: ./historico
+    container_name: historico-ms
+    depends_on:
+      - server
+      - postgres
+      - rabbitmq
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    networks:
+      - msp-network
+
+  notificacoes:
+    build: ./notificacoes
+    container_name: notificacoes-ms
+    depends_on:
+      - server
+      - rabbitmq
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    networks:
+      - msp-network
+
+networks:
+  msp-network:
+    driver: bridge
