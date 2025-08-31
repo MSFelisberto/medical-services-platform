@@ -6,6 +6,12 @@ services:
       - "8761:8761"
     networks:
       - msp-network
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8761" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
 
   postgres:
     image: postgres:13
@@ -44,7 +50,8 @@ services:
     ports:
       - "8080:8080"
     depends_on:
-      - server
+      server:
+        condition: service_healthy
     environment:
       - SPRING_PROFILES_ACTIVE=docker
     networks:
@@ -57,7 +64,7 @@ services:
       postgres:
         condition: service_healthy
       server:
-        condition: service_started
+        condition: service_healthy
     environment:
       - SPRING_PROFILES_ACTIVE=docker
     networks:
@@ -70,7 +77,7 @@ services:
       postgres:
         condition: service_healthy
       server:
-        condition: service_started
+        condition: service_healthy
       rabbitmq:
         condition: service_started
     environment:
@@ -85,7 +92,7 @@ services:
       postgres:
         condition: service_healthy
       server:
-        condition: service_started
+        condition: service_healthy
       rabbitmq:
         condition: service_started
     environment:
@@ -97,8 +104,10 @@ services:
     build: ./notificacoes
     container_name: notificacoes-ms
     depends_on:
-      - server
-      - rabbitmq
+      server:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_started
     environment:
       - SPRING_PROFILES_ACTIVE=docker
     networks:
