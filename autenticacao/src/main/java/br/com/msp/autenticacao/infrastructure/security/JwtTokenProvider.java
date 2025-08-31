@@ -3,6 +3,7 @@ package br.com.msp.autenticacao.infrastructure.security;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -45,5 +46,32 @@ public class JwtTokenProvider {
                 .setExpiration(expirationDate)
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
+    }
+
+    public boolean validateToken(String token) {
+        try {
+            getSecretKey();
+            Jwts.parserBuilder().setSigningKey(this.key).build().parseClaimsJws(token);
+            return true;
+        } catch (Exception e) {
+            LoggerFactory.getLogger(this.getClass()).error("Validação do JWT falhou: ", e);
+            return false;
+        }
+    }
+
+    public String getEmailFromToken(String token) {
+        getSecretKey();
+        return Jwts.parserBuilder()
+                .setSigningKey(this.key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .getSubject();
+    }
+
+    private void getSecretKey() {
+        if (key == null) {
+            key = Keys.hmacShaKeyFor(jwtSecret.getBytes());
+        }
     }
 }
