@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="server" />
+        <module name="gateway" />
+      </profile>
+      <profile name="Annotation profile for historico" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.38/lombok-1.18.38.jar" />
+        </processorPath>
+        <module name="historico" />
+        <module name="notificacoes" />
+        <module name="autenticacao" />
+        <module name="agendamento" />
+      </profile>
+    </annotationProcessing>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="agendamento" options="-parameters" />
+      <module name="autenticacao" options="-parameters" />
+      <module name="gateway" options="-parameters" />
+      <module name="historico" options="-parameters" />
+      <module name="notificacoes" options="-parameters" />
+      <module name="server" options="-parameters" />
+    </option>
+  </component>
+</project>
