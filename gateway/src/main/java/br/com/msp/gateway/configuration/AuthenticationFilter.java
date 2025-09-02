@@ -1,7 +1,6 @@
 package br.com.msp.gateway.configuration;
 
 import br.com.msp.gateway.util.JwtUtil;
-import io.jsonwebtoken.Claims;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.http.HttpHeaders;
