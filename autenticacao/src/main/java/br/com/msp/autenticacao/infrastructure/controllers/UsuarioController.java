@@ -1,8 +1,7 @@
 package br.com.msp.autenticacao.infrastructure.controllers;
 
 import br.com.msp.autenticacao.application.usecases.CadastrarUsuarioUseCase;
-import br.com.msp.autenticacao.domain.Usuario;
-import br.com.msp.autenticacao.infrastructure.controllers.dto.UsuarioResquestDTO;
+import br.com.msp.autenticacao.infrastructure.controllers.dto.UsuarioRequestDTO;
 import br.com.msp.autenticacao.infrastructure.controllers.mappers.UsuarioMapper;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -24,7 +23,7 @@ public class UsuarioController {
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<String> cadastrar(@RequestBody @Valid UsuarioResquestDTO resquestDTO) {
+    public ResponseEntity<String> cadastrar(@RequestBody @Valid UsuarioRequestDTO resquestDTO) {
 
         var input = usuarioMapper.toInput(resquestDTO);
 

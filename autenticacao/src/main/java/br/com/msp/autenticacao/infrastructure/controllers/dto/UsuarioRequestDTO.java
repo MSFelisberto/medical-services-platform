@@ -6,7 +6,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
-public record UsuarioResquestDTO(
+public record UsuarioRequestDTO(
         @NotBlank(message = "O e-mail não pode ser vazio.")
         @Email(message = "Formato de e-mail inválido.")
         String email,

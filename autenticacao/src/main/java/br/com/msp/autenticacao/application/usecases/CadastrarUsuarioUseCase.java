@@ -1,7 +1,7 @@
 package br.com.msp.autenticacao.application.usecases;
 
 import br.com.msp.autenticacao.application.gateways.UsuarioGateway;
-import br.com.msp.autenticacao.application.models.CadastrarUsuarioInput;
+import br.com.msp.autenticacao.application.inputs.CadastrarUsuarioInput;
 import br.com.msp.autenticacao.domain.Usuario;
 
 public class CadastrarUsuarioUseCase {

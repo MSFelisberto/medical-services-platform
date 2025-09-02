@@ -1,4 +1,4 @@
-package br.com.msp.autenticacao.application.models;
+package br.com.msp.autenticacao.application.inputs;
 
 import br.com.msp.autenticacao.domain.Perfil;
 
