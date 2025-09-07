@@ -1,4 +1,4 @@
-package br.com.msp.agendamento.security;
+package br.com.msp.agendamento.infrastructure.security;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;

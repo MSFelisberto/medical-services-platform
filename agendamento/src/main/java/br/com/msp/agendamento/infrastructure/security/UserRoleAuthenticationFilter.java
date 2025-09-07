@@ -1,4 +1,4 @@
-package br.com.msp.agendamento.security;
+package br.com.msp.agendamento.infrastructure.security;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

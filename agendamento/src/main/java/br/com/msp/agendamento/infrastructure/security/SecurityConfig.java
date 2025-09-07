@@ -1,4 +1,4 @@
-package br.com.msp.agendamento.security;
+package br.com.msp.agendamento.infrastructure.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
