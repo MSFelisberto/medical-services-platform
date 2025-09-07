@@ -22,16 +22,26 @@ public class UserRoleAuthenticationFilter extends OncePerRequestFilter {
                                     @NonNull HttpServletResponse response,
                                     @NonNull FilterChain filterChain) throws ServletException, IOException {
         String userEmail = request.getHeader("X-User-Email");
-        String userRoles = request.getHeader("X-User_Roles");
+        String userRoles = request.getHeader("X-User-Roles");
 
-        if (userEmail != null && userRoles != null) {
-            List<GrantedAuthority> authorities = Arrays.stream(userRoles.split(","))
-                    .map(role -> new SimpleGrantedAuthority("ROLE_" + role.toUpperCase()))
-                    .collect(Collectors.toList());
+        if (userEmail != null && userRoles != null && !userRoles.isEmpty()) {
+            try {
+                List<GrantedAuthority> authorities = Arrays.stream(userRoles.split(","))
+                        .map(SimpleGrantedAuthority::new)
+                        .collect(Collectors.toList());
 
-            JwtAuthenticationToken auth = new JwtAuthenticationToken(userEmail, null, authorities);
-            SecurityContextHolder.getContext().setAuthentication(auth);
+                JwtAuthenticationToken auth = new JwtAuthenticationToken(userEmail, null, authorities);
+                SecurityContextHolder.getContext().setAuthentication(auth);
+
+            } catch (Exception e) {
+                logger.error("UserRoleAuthenticationFilter: Não conseguiu verificar o authorities do token", e);
+                SecurityContextHolder.clearContext();
+            }
+        } else {
+            logger.warn("UserRoleAuthenticationFilter: Não conseguiu resgatar o Role e o Email do usuario. Limpando contexto.");
+            SecurityContextHolder.clearContext();
         }
+
         filterChain.doFilter(request, response);
     }
 }

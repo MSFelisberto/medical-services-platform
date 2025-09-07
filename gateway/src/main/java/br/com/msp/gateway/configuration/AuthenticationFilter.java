@@ -5,19 +5,18 @@ import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.server.ServerWebExchange;
 
 import java.util.List;
 
-
 @Component
 public class AuthenticationFilter extends AbstractGatewayFilterFactory<AuthenticationFilter.Config> {
 
     private final RouterValidator validator;
     private final JwtUtil jwtUtil;
-
 
     public AuthenticationFilter(RouterValidator validator, JwtUtil jwtUtil) {
         super(Config.class);
@@ -29,20 +28,34 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
     public GatewayFilter apply(Config config) {
         return ((exchange, chain) -> {
             if (validator.isSecured.test(exchange.getRequest())) {
+
                 if (!exchange.getRequest().getHeaders().containsKey(HttpHeaders.AUTHORIZATION)) {
                     throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Missing authorization header");
                 }
 
-                String authHeader = exchange.getRequest().getHeaders().get(HttpHeaders.AUTHORIZATION).get(0);
+                String authHeader = exchange.getRequest().getHeaders().get(HttpHeaders.AUTHORIZATION).getFirst();
+                String token = null;
                 if (authHeader != null && authHeader.startsWith("Bearer ")) {
-                    authHeader = authHeader.substring(7);
+                    token = authHeader.substring(7);
                 }
+
                 try {
-                    if (jwtUtil.isInvalid(authHeader)) {
+                    if (jwtUtil.isInvalid(token)) {
                         throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Token expired");
                     }
 
-                    populateRequestWithHeaders(exchange, authHeader);
+                    String email = jwtUtil.getEmailFromToken(token);
+                    List<String> roles = jwtUtil.getRolesFromToken(token);
+                    String rolesString = String.join(",", roles);
+
+                    ServerHttpRequest mutatedRequest = exchange.getRequest().mutate()
+                            .header("X-User-Email", email)
+                            .header("X-User-Roles", rolesString)
+                            .build();
+
+                    ServerWebExchange mutatedExchange = exchange.mutate().request(mutatedRequest).build();
+
+                    return chain.filter(mutatedExchange);
 
                 } catch (Exception e) {
                     throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized access to application");
@@ -51,19 +64,6 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
             return chain.filter(exchange);
         });
     }
-
-    @SuppressWarnings("unchecked")
-    private void populateRequestWithHeaders(ServerWebExchange exchange, String token) {
-        String email = jwtUtil.getEmailFromToken(token);
-        List<String> roles = jwtUtil.getRolesFromToken(token);
-
-
-        exchange.getRequest().mutate()
-                .header("X-User-Email", email)
-                .header("X-User-Roles", String.join(",", roles))
-                .build();
-    }
-
 
     public static class Config {}
 }
