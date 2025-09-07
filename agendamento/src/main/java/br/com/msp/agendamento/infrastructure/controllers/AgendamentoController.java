@@ -1,10 +1,8 @@
 package br.com.msp.agendamento.infrastructure.controllers;
 
+import br.com.msp.agendamento.application.dto.AgendarConsultaInput;
 import br.com.msp.agendamento.application.dto.ReagendarConsultaInput;
-import br.com.msp.agendamento.application.usecases.AgendarConsultaUseCase;
-import br.com.msp.agendamento.application.usecases.CancelarConsultaUseCase;
-import br.com.msp.agendamento.application.usecases.ListarConsultasPorPacienteUseCase;
-import br.com.msp.agendamento.application.usecases.ReagendarConsultaUseCase;
+import br.com.msp.agendamento.application.usecases.*;
 import br.com.msp.agendamento.infrastructure.controllers.dto.ConsultaRequestDTO;
 import br.com.msp.agendamento.infrastructure.controllers.dto.ConsultaResponseDTO;
 import br.com.msp.agendamento.infrastructure.controllers.mappers.ConsultaDTOMapper;
@@ -20,21 +18,13 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/agendamento")
 public class AgendamentoController {
-    private final AgendarConsultaUseCase agendarConsultaUseCase;
-    private final ReagendarConsultaUseCase reagendarConsultaUseCase;
-    private final CancelarConsultaUseCase cancelarConsultaUseCase;
-    private final ListarConsultasPorPacienteUseCase listarConsultasPorPacienteUseCase;
+
+    private final AgendamentoUseCase agendamentoUseCase;
     private final ConsultaDTOMapper mapper;
 
-    public AgendamentoController(AgendarConsultaUseCase agendarConsultaUseCase,
-                                 ReagendarConsultaUseCase reagendarConsultaUseCase,
-                                 CancelarConsultaUseCase cancelarConsultaUseCase,
-                                 ListarConsultasPorPacienteUseCase listarConsultasPorPacienteUseCase,
+    public AgendamentoController(AgendamentoUseCase agendamentoUseCase,
                                  ConsultaDTOMapper mapper) {
-        this.agendarConsultaUseCase = agendarConsultaUseCase;
-        this.reagendarConsultaUseCase = reagendarConsultaUseCase;
-        this.cancelarConsultaUseCase = cancelarConsultaUseCase;
-        this.listarConsultasPorPacienteUseCase = listarConsultasPorPacienteUseCase;
+        this.agendamentoUseCase = agendamentoUseCase;
         this.mapper = mapper;
     }
 
@@ -43,10 +33,10 @@ public class AgendamentoController {
     public ResponseEntity<ConsultaResponseDTO> agendar(
             @RequestBody @Valid ConsultaRequestDTO requestDTO
     ) {
-        var input = mapper.toInput(requestDTO);
-        var output = agendarConsultaUseCase.executar(input);
+        AgendarConsultaInput input = mapper.toInput(requestDTO);
+        var output = agendamentoUseCase.agendarConsulta(input);
         var response = mapper.toResponse(output);
-        URI uri = URI.create("/agendamento" + response.id());
+        URI uri = URI.create("/agendamento/" + response.id());
         return ResponseEntity.created(uri).body(response);
     }
 
@@ -57,14 +47,14 @@ public class AgendamentoController {
             @RequestBody @Valid ConsultaRequestDTO requestDTO
     ) {
         ReagendarConsultaInput input = mapper.toReagendarInput(id, requestDTO);
-        var output = reagendarConsultaUseCase.executar(input);
+        var output = agendamentoUseCase.reagendarConsulta(input);
         return ResponseEntity.ok(mapper.toResponse(output));
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAnyRole('MEDICO', 'ENFERMEIRO')")
     public ResponseEntity<Void> cancelar(@PathVariable Long id) {
-        cancelarConsultaUseCase.executar(id);
+        agendamentoUseCase.cancelarConsulta(id);
         return ResponseEntity.noContent().build();
     }
 
@@ -73,7 +63,7 @@ public class AgendamentoController {
     public ResponseEntity<List<ConsultaResponseDTO>> listarPorPaciente(
             @PathVariable Long pacienteId
     ) {
-        List<ConsultaResponseDTO> response = listarConsultasPorPacienteUseCase.executar(pacienteId)
+        List<ConsultaResponseDTO> response = agendamentoUseCase.listarConsultasPorPaciente(pacienteId)
                 .stream()
                 .map(mapper::toResponse)
                 .collect(Collectors.toList());
