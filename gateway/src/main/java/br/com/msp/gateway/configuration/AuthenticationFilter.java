@@ -60,7 +60,7 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
 
         exchange.getRequest().mutate()
                 .header("X-User-Email", email)
-                .header("X-User_Roles", String.join(",", roles))
+                .header("X-User-Roles", String.join(",", roles))
                 .build();
     }
 
