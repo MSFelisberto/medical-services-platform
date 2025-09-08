@@ -46,9 +46,11 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
 
                     String email = jwtUtil.getEmailFromToken(token);
                     List<String> roles = jwtUtil.getRolesFromToken(token);
+                    Long id = jwtUtil.getUserIdFromToken(token);
                     String rolesString = String.join(",", roles);
 
                     ServerHttpRequest mutatedRequest = exchange.getRequest().mutate()
+                            .header("X-User-ID", String.valueOf(id))
                             .header("X-User-Email", email)
                             .header("X-User-Roles", rolesString)
                             .build();

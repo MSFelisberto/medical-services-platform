@@ -33,6 +33,10 @@ public class JwtUtil {
                 .getBody();
     }
 
+    public Long getUserIdFromToken(String token) {
+        return getAllClaimsFromToken(token).get("userId", Long.class);
+    }
+
     public String getEmailFromToken(String token) {
         return getAllClaimsFromToken(token).getSubject();
     }

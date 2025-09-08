@@ -1,4 +1,4 @@
-package br.com.msp.agendamento.security;
+package br.com.msp.agendamento.infrastructure.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,7 +21,6 @@ public class SecurityConfig {
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/**").hasAnyRole("MEDICO", "ENFERMEIRO")
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(new UserRoleAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)

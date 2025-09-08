@@ -1,4 +1,4 @@
-package br.com.msp.agendamento.security;
+package br.com.msp.agendamento.infrastructure.security;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
@@ -9,5 +9,10 @@ public class JwtAuthenticationToken extends UsernamePasswordAuthenticationToken 
 
     public JwtAuthenticationToken(Object principal, Object credentials, Collection<? extends GrantedAuthority> authorities) {
         super(principal, credentials, authorities);
+    }
+
+    @Override
+    public UserPrincipal getPrincipal() {
+        return (UserPrincipal) super.getPrincipal();
     }
 }

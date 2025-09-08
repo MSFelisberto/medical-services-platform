@@ -27,7 +27,7 @@ public class JwtTokenProvider {
     private SecretKey key;
 
     public String generateToken(Authentication authentication) {
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         Date now = new Date();
         Date expirationDate = new Date(now.getTime() + jwtExpirationInMs);
 
@@ -42,6 +42,7 @@ public class JwtTokenProvider {
         return Jwts.builder()
                 .setSubject(userDetails.getUsername())
                 .claim("roles", roles)
+                .claim("userId", userDetails.getId())
                 .setIssuedAt(now)
                 .setExpiration(expirationDate)
                 .signWith(key, SignatureAlgorithm.HS256)
