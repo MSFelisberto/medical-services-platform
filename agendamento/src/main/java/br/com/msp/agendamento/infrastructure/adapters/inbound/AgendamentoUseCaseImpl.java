@@ -1,6 +1,7 @@
 package br.com.msp.agendamento.infrastructure.adapters.inbound;
 
 import br.com.msp.agendamento.application.dto.AgendarConsultaInput;
+import br.com.msp.agendamento.application.dto.AuthenticatedUser;
 import br.com.msp.agendamento.application.dto.ConsultaOutput;
 import br.com.msp.agendamento.application.dto.ReagendarConsultaInput;
 import br.com.msp.agendamento.application.gateways.ConsultaGateway;
@@ -38,7 +39,7 @@ public class AgendamentoUseCaseImpl implements AgendamentoUseCase {
     }
 
     @Override
-    public List<ConsultaOutput> listarConsultasPorPaciente(Long pacienteId) {
-        return listarConsultasPorPacienteUseCase.executar(pacienteId);
+    public List<ConsultaOutput> listarConsultasPorPaciente(Long pacienteId, AuthenticatedUser currentUser) {
+        return listarConsultasPorPacienteUseCase.executar(pacienteId, currentUser);
     }
 }

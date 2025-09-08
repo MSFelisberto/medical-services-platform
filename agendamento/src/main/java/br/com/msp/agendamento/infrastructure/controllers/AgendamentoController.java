@@ -1,14 +1,19 @@
 package br.com.msp.agendamento.infrastructure.controllers;
 
 import br.com.msp.agendamento.application.dto.AgendarConsultaInput;
+import br.com.msp.agendamento.application.dto.AuthenticatedUser;
 import br.com.msp.agendamento.application.dto.ReagendarConsultaInput;
 import br.com.msp.agendamento.application.usecases.*;
 import br.com.msp.agendamento.infrastructure.controllers.dto.ConsultaRequestDTO;
 import br.com.msp.agendamento.infrastructure.controllers.dto.ConsultaResponseDTO;
 import br.com.msp.agendamento.infrastructure.controllers.mappers.ConsultaDTOMapper;
+import br.com.msp.agendamento.infrastructure.security.JwtAuthenticationToken;
+import br.com.msp.agendamento.infrastructure.security.UserPrincipal;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -61,9 +66,15 @@ public class AgendamentoController {
     @GetMapping("/paciente/{pacienteId}")
     @PreAuthorize("hasAnyRole('MEDICO', 'ENFERMEIRO', 'PACIENTE')")
     public ResponseEntity<List<ConsultaResponseDTO>> listarPorPaciente(
-            @PathVariable Long pacienteId
+            @PathVariable Long pacienteId,
+            Authentication authentication
     ) {
-        List<ConsultaResponseDTO> response = agendamentoUseCase.listarConsultasPorPaciente(pacienteId)
+
+        UserPrincipal principal = ((JwtAuthenticationToken) authentication).getPrincipal();
+        List<String> roles = principal.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList());
+        AuthenticatedUser currentUser = new AuthenticatedUser(principal.getId(), principal.getEmail(),  roles);
+
+        List<ConsultaResponseDTO> response = agendamentoUseCase.listarConsultasPorPaciente(pacienteId, currentUser)
                 .stream()
                 .map(mapper::toResponse)
                 .collect(Collectors.toList());

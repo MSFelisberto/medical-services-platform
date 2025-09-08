@@ -23,7 +23,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         return usuarioRepository.findByEmail(email)
-                .map(usuario -> new User(
+                .map(usuario -> new CustomUserDetails(
+                        usuario.getId(),
                         usuario.getEmail(),
                         usuario.getSenha(),
                         Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + usuario.getPerfil().name()))

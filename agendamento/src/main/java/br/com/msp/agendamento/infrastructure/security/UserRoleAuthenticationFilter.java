@@ -21,17 +21,20 @@ public class UserRoleAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(@NonNull HttpServletRequest request,
                                     @NonNull HttpServletResponse response,
                                     @NonNull FilterChain filterChain) throws ServletException, IOException {
-
+        String userIdStr = request.getHeader("X-User-ID");
         String userEmail = request.getHeader("X-User-Email");
         String userRoles = request.getHeader("X-User-Roles");
 
         if (userEmail != null && userRoles != null && !userRoles.isEmpty()) {
             try {
+                Long userId = Long.parseLong(userIdStr);
                 List<GrantedAuthority> authorities = Arrays.stream(userRoles.split(","))
                         .map(SimpleGrantedAuthority::new)
                         .collect(Collectors.toList());
 
-                JwtAuthenticationToken auth = new JwtAuthenticationToken(userEmail, null, authorities);
+                UserPrincipal principal = new UserPrincipal(userId, userEmail, authorities);
+
+                JwtAuthenticationToken auth = new JwtAuthenticationToken(principal, null, authorities);
                 SecurityContextHolder.getContext().setAuthentication(auth);
 
             } catch (Exception e) {
