@@ -1,0 +1,13 @@
+type Query {
+    historicoPorPaciente(pacienteId: ID!): [HistoricoConsulta]
+    historicoPorId(id: ID!): HistoricoConsulta
+}
+
+type HistoricoConsulta {
+    id: ID!
+    dataRealizacao: String
+    especialidade: String
+    diagnostico: String
+    prescricao: String
+    observacoes: String
+}
