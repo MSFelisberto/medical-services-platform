@@ -1,4 +1,4 @@
-package br.com.msp.notificacoes.security;
+package br.com.msp.notificacoes.infrastructure.security;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;

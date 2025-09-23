@@ -1,4 +1,4 @@
-package br.com.msp.notificacoes.security;
+package br.com.msp.notificacoes.infrastructure.security;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
