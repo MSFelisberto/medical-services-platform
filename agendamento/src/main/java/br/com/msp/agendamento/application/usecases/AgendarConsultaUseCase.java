@@ -4,13 +4,21 @@ import br.com.msp.agendamento.application.dto.AgendarConsultaInput;
 import br.com.msp.agendamento.application.dto.ConsultaOutput;
 import br.com.msp.agendamento.application.gateways.ConsultaGateway;
 import br.com.msp.agendamento.domain.model.Consulta;
+import br.com.msp.agendamento.infrastructure.controllers.dto.ConsultaResponseDTO;
+import br.com.msp.agendamento.infrastructure.controllers.mappers.ConsultaDTOMapper;
+import br.com.msp.agendamento.infrastructure.producer.NotificationProducer;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class AgendarConsultaUseCase {
 
     private final ConsultaGateway consultaGateway;
 
-    public AgendarConsultaUseCase(ConsultaGateway consultaGateway) {
+    private final NotificationProducer notificationProducer;
+
+    public AgendarConsultaUseCase(ConsultaGateway consultaGateway, NotificationProducer notificationProducer) {
         this.consultaGateway = consultaGateway;
+        this.notificationProducer = notificationProducer;
     }
 
     public ConsultaOutput executar(AgendarConsultaInput input) {
@@ -22,8 +30,8 @@ public class AgendarConsultaUseCase {
         novaConsulta.setCancelada(false);
 
         Consulta consultaAgendada = consultaGateway.agendar(novaConsulta);
-
-        // TODO: Enviar o evento para a fila de Notificacao
+        log.info("[AgendarConsultaUseCase] Enviando notificação de agendamento de consulta: id {}", consultaAgendada.getId());
+        notificationProducer.send(consultaAgendada);
 
         return new ConsultaOutput(
                 consultaAgendada.getId(),

@@ -3,6 +3,8 @@ package br.com.msp.agendamento.infrastructure.controllers.mappers;
 import br.com.msp.agendamento.application.dto.AgendarConsultaInput;
 import br.com.msp.agendamento.application.dto.ConsultaOutput;
 import br.com.msp.agendamento.application.dto.ReagendarConsultaInput;
+import br.com.msp.agendamento.domain.model.Consulta;
+import br.com.msp.agendamento.infrastructure.controllers.dto.ConsultaDTO;
 import br.com.msp.agendamento.infrastructure.controllers.dto.ConsultaRequestDTO;
 import br.com.msp.agendamento.infrastructure.controllers.dto.ConsultaResponseDTO;
 import org.springframework.stereotype.Component;
@@ -38,4 +40,14 @@ public class ConsultaDTOMapper {
                 output.especialidade()
         );
     }
+
+    public static ConsultaDTO toDTO(Consulta consulta) {
+        return new ConsultaDTO(
+                consulta.getPacienteId(),
+                consulta.getMedicoId(),
+                consulta.getDataHora(),
+                consulta.getEspecialidade()
+        );
+    }
+
 }

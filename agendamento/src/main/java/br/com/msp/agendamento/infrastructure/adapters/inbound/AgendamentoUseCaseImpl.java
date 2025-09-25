@@ -6,6 +6,7 @@ import br.com.msp.agendamento.application.dto.ConsultaOutput;
 import br.com.msp.agendamento.application.dto.ReagendarConsultaInput;
 import br.com.msp.agendamento.application.gateways.ConsultaGateway;
 import br.com.msp.agendamento.application.usecases.*;
+import br.com.msp.agendamento.infrastructure.producer.NotificationProducer;
 import org.springframework.security.core.parameters.P;
 
 import java.util.List;
@@ -16,11 +17,11 @@ public class AgendamentoUseCaseImpl implements AgendamentoUseCase {
     private final CancelarConsultaUseCase cancelarConsultaUseCase;
     private final ListarConsultasPorPacienteUseCase listarConsultasPorPacienteUseCase;
 
-    public AgendamentoUseCaseImpl(ConsultaGateway consultaGateway) {
-        this.agendarConsultaUseCase = new AgendarConsultaUseCase(consultaGateway);
-        this.reagendarConsultaUseCase = new ReagendarConsultaUseCase(consultaGateway);
-        this.cancelarConsultaUseCase = new CancelarConsultaUseCase(consultaGateway);
-        this.listarConsultasPorPacienteUseCase = new ListarConsultasPorPacienteUseCase(consultaGateway);
+    public AgendamentoUseCaseImpl(ConsultaGateway consultaGateway, NotificationProducer notificationProducer) {
+        this.agendarConsultaUseCase = new AgendarConsultaUseCase(consultaGateway,notificationProducer);
+        this.reagendarConsultaUseCase = new ReagendarConsultaUseCase(consultaGateway,notificationProducer);
+        this.cancelarConsultaUseCase = new CancelarConsultaUseCase(consultaGateway,notificationProducer);
+        this.listarConsultasPorPacienteUseCase = new ListarConsultasPorPacienteUseCase(consultaGateway,notificationProducer);
     }
 
     @Override
