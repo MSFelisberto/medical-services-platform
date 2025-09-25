@@ -1,4 +1,4 @@
-package br.com.msp.notificacoes;
+package br.com.msp.notificacoes.infrastructure.controllers;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
