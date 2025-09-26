@@ -7,6 +7,7 @@ import br.com.msp.agendamento.domain.model.Consulta;
 import br.com.msp.agendamento.infrastructure.controllers.dto.ConsultaResponseDTO;
 import br.com.msp.agendamento.infrastructure.controllers.mappers.ConsultaDTOMapper;
 import br.com.msp.agendamento.infrastructure.producer.NotificationProducer;
+import br.com.msp.medicalcommons.enums.ETipoNotificacao;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -31,7 +32,7 @@ public class AgendarConsultaUseCase {
 
         Consulta consultaAgendada = consultaGateway.agendar(novaConsulta);
         log.info("[AgendarConsultaUseCase] Enviando notificação de agendamento de consulta: id {}", consultaAgendada.getId());
-        notificationProducer.send(consultaAgendada);
+        notificationProducer.send(consultaAgendada, ETipoNotificacao.AGENDAR);
 
         return new ConsultaOutput(
                 consultaAgendada.getId(),

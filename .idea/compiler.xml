@@ -10,6 +10,15 @@
         <module name="server" />
         <module name="gateway" />
       </profile>
+      <profile name="Annotation profile for medical-commons" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.32/lombok-1.18.32.jar" />
+        </processorPath>
+        <module name="medical-commons" />
+      </profile>
       <profile name="Annotation profile for notificacoes" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
@@ -30,6 +39,7 @@
       <module name="autenticacao" options="-parameters" />
       <module name="gateway" options="-parameters" />
       <module name="historico" options="-parameters" />
+      <module name="medical-commons" options="-parameters" />
       <module name="notificacoes" options="-parameters" />
       <module name="server" options="-parameters" />
     </option>

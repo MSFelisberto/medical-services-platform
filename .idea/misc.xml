@@ -10,6 +10,7 @@
         <option value="$PROJECT_DIR$/autenticacao/pom.xml" />
         <option value="$PROJECT_DIR$/notificacoes/pom.xml" />
         <option value="$PROJECT_DIR$/historico/pom.xml" />
+        <option value="$PROJECT_DIR$/medical-commons/pom.xml" />
       </list>
     </option>
   </component>

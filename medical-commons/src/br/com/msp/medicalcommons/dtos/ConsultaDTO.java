@@ -1,4 +1,4 @@
-package br.com.msp.notificacoes.infrastructure.dtos;
+package br.com.msp.medicalcommons.dtos;
 
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotBlank;

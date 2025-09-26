@@ -5,6 +5,7 @@ import br.com.msp.agendamento.application.dto.ReagendarConsultaInput;
 import br.com.msp.agendamento.application.gateways.ConsultaGateway;
 import br.com.msp.agendamento.domain.model.Consulta;
 import br.com.msp.agendamento.infrastructure.producer.NotificationProducer;
+import br.com.msp.medicalcommons.enums.ETipoNotificacao;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 
@@ -31,7 +32,7 @@ public class ReagendarConsultaUseCase {
         Consulta consultaReagendada = consultaGateway.reagendar(consulta);
 
         log.info("[ReagendarConsultaUseCase] Enviando notificação de reagendamento: id {}", consulta.getId());
-        notificationProducer.send(consulta);
+        notificationProducer.send(consulta, ETipoNotificacao.REAGENDAR);
 
         return new ConsultaOutput(
                 consultaReagendada.getId(),
