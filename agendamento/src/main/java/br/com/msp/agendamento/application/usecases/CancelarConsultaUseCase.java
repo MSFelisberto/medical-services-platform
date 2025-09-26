@@ -24,6 +24,6 @@ public class CancelarConsultaUseCase {
         consulta.setCancelada(true);
         consultaGateway.cancelar(consulta);
         log.info("[CancelarConsultaUseCase] Enviando notificação de cancelamentto da consulta: {}",consulta.getId());
-        notificationProducer.send(consulta);
+        notificationProducer.sendCancelar(consulta);
     }
 }

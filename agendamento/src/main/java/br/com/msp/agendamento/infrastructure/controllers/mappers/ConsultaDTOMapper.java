@@ -4,9 +4,9 @@ import br.com.msp.agendamento.application.dto.AgendarConsultaInput;
 import br.com.msp.agendamento.application.dto.ConsultaOutput;
 import br.com.msp.agendamento.application.dto.ReagendarConsultaInput;
 import br.com.msp.agendamento.domain.model.Consulta;
-import br.com.msp.agendamento.infrastructure.controllers.dto.ConsultaDTO;
 import br.com.msp.agendamento.infrastructure.controllers.dto.ConsultaRequestDTO;
 import br.com.msp.agendamento.infrastructure.controllers.dto.ConsultaResponseDTO;
+import br.com.msp.commons.dtos.ConsultaDTO;
 import org.springframework.stereotype.Component;
 
 @Component

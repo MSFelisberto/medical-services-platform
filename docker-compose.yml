@@ -1,6 +1,8 @@
 services:
   server:
-    build: ./server
+    build:
+      context: .
+      dockerfile: server/Dockerfile
     container_name: eureka-server
     ports:
       - "8761:8761"
@@ -12,6 +14,7 @@ services:
       timeout: 5s
       retries: 5
       start_period: 10s
+
 
   postgres:
     image: postgres:13
@@ -45,7 +48,9 @@ services:
       - msp-network
 
   gateway:
-    build: ./gateway
+    build:
+      context: .
+      dockerfile: gateway/Dockerfile
     container_name: api-gateway
     ports:
       - "8080:8080"
@@ -58,7 +63,9 @@ services:
       - msp-network
 
   autenticacao:
-    build: ./autenticacao
+    build:
+      context: .
+      dockerfile: autenticacao/Dockerfile
     container_name: autenticacao-ms
     depends_on:
       postgres:
@@ -71,7 +78,9 @@ services:
       - msp-network
 
   agendamento:
-    build: ./agendamento
+    build:
+      context: .
+      dockerfile: agendamento/Dockerfile
     container_name: agendamento-ms
     depends_on:
       postgres:
@@ -86,7 +95,9 @@ services:
       - msp-network
 
   historico:
-    build: ./historico
+    build:
+      context: .
+      dockerfile: historico/Dockerfile
     container_name: historico-ms
     depends_on:
       postgres:
@@ -101,7 +112,9 @@ services:
       - msp-network
 
   notificacoes:
-    build: ./notificacoes
+    build:
+      context: .
+      dockerfile: notificacoes/Dockerfile
     container_name: notificacoes-ms
     depends_on:
       server:

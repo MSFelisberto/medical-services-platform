@@ -31,7 +31,7 @@ public class ReagendarConsultaUseCase {
         Consulta consultaReagendada = consultaGateway.reagendar(consulta);
 
         log.info("[ReagendarConsultaUseCase] Enviando notificação de reagendamento: id {}", consulta.getId());
-        notificationProducer.send(consulta);
+        notificationProducer.sendReagendar(consulta);
 
         return new ConsultaOutput(
                 consultaReagendada.getId(),
