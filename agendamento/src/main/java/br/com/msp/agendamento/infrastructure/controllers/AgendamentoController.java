@@ -1,12 +1,10 @@
 package br.com.msp.agendamento.infrastructure.controllers;
 
-import br.com.msp.agendamento.application.dto.AgendarConsultaInput;
-import br.com.msp.agendamento.application.dto.AuthenticatedUser;
-import br.com.msp.agendamento.application.dto.ReagendarConsultaInput;
-import br.com.msp.agendamento.application.usecases.*;
+import br.com.msp.agendamento.application.dto.*;
+import br.com.msp.agendamento.application.ports.inbound.AgendamentoUseCase;
 import br.com.msp.agendamento.infrastructure.controllers.dto.ConsultaRequestDTO;
 import br.com.msp.agendamento.infrastructure.controllers.dto.ConsultaResponseDTO;
-import br.com.msp.agendamento.infrastructure.controllers.mappers.ConsultaDTOMapper;
+import br.com.msp.agendamento.infrastructure.controllers.dto.ReagendarConsultaRequestDTO;
 import br.com.msp.agendamento.infrastructure.security.JwtAuthenticationToken;
 import br.com.msp.agendamento.infrastructure.security.UserPrincipal;
 import jakarta.validation.Valid;
@@ -25,22 +23,25 @@ import java.util.stream.Collectors;
 public class AgendamentoController {
 
     private final AgendamentoUseCase agendamentoUseCase;
-    private final ConsultaDTOMapper mapper;
 
-    public AgendamentoController(AgendamentoUseCase agendamentoUseCase,
-                                 ConsultaDTOMapper mapper) {
+    public AgendamentoController(AgendamentoUseCase agendamentoUseCase) {
         this.agendamentoUseCase = agendamentoUseCase;
-        this.mapper = mapper;
     }
 
     @PostMapping
     @PreAuthorize("hasAnyRole('MEDICO', 'ENFERMEIRO')")
-    public ResponseEntity<ConsultaResponseDTO> agendar(
-            @RequestBody @Valid ConsultaRequestDTO requestDTO
-    ) {
-        AgendarConsultaInput input = mapper.toInput(requestDTO);
-        var output = agendamentoUseCase.agendarConsulta(input);
-        var response = mapper.toResponse(output);
+    public ResponseEntity<ConsultaResponseDTO> agendar(@RequestBody @Valid ConsultaRequestDTO requestDTO) {
+
+        AgendarConsultaCommand command = new AgendarConsultaCommand(
+                requestDTO.pacienteId(),
+                requestDTO.medicoId(),
+                requestDTO.dataHora(),
+                requestDTO.especialidade()
+        );
+
+        ConsultaOutput output = agendamentoUseCase.agendarConsulta(command);
+        ConsultaResponseDTO response = toResponseDTO(output);
+
         URI uri = URI.create("/agendamento/" + response.id());
         return ResponseEntity.created(uri).body(response);
     }
@@ -49,17 +50,24 @@ public class AgendamentoController {
     @PreAuthorize("hasAnyRole('MEDICO', 'ENFERMEIRO')")
     public ResponseEntity<ConsultaResponseDTO> reagendar(
             @PathVariable Long id,
-            @RequestBody @Valid ConsultaRequestDTO requestDTO
-    ) {
-        ReagendarConsultaInput input = mapper.toReagendarInput(id, requestDTO);
-        var output = agendamentoUseCase.reagendarConsulta(input);
-        return ResponseEntity.ok(mapper.toResponse(output));
+            @RequestBody @Valid ReagendarConsultaRequestDTO requestDTO) {
+
+        ReagendarConsultaCommand command = new ReagendarConsultaCommand(
+                id,
+                requestDTO.medicoId(),
+                requestDTO.dataHora(),
+                requestDTO.especialidade()
+        );
+
+        ConsultaOutput output = agendamentoUseCase.reagendarConsulta(command);
+        return ResponseEntity.ok(toResponseDTO(output));
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAnyRole('MEDICO', 'ENFERMEIRO')")
     public ResponseEntity<Void> cancelar(@PathVariable Long id) {
-        agendamentoUseCase.cancelarConsulta(id);
+        CancelarConsultaCommand command = new CancelarConsultaCommand(id);
+        agendamentoUseCase.cancelarConsulta(command);
         return ResponseEntity.noContent().build();
     }
 
@@ -67,17 +75,36 @@ public class AgendamentoController {
     @PreAuthorize("hasAnyRole('MEDICO', 'ENFERMEIRO', 'PACIENTE')")
     public ResponseEntity<List<ConsultaResponseDTO>> listarPorPaciente(
             @PathVariable Long pacienteId,
-            Authentication authentication
-    ) {
+            Authentication authentication) {
 
         UserPrincipal principal = ((JwtAuthenticationToken) authentication).getPrincipal();
-        List<String> roles = principal.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList());
-        AuthenticatedUser currentUser = new AuthenticatedUser(principal.getId(), principal.getEmail(),  roles);
-
-        List<ConsultaResponseDTO> response = agendamentoUseCase.listarConsultasPorPaciente(pacienteId, currentUser)
-                .stream()
-                .map(mapper::toResponse)
+        List<String> roles = principal.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toList());
+
+        AuthenticatedUser currentUser = new AuthenticatedUser(
+                principal.getId(),
+                principal.getEmail(),
+                roles
+        );
+
+        ListarConsultasQuery query = new ListarConsultasQuery(pacienteId, currentUser);
+        List<ConsultaResponseDTO> response = agendamentoUseCase.listarConsultasPorPaciente(query)
+                .stream()
+                .map(this::toResponseDTO)
+                .collect(Collectors.toList());
+
         return ResponseEntity.ok(response);
+    }
+
+    private ConsultaResponseDTO toResponseDTO(ConsultaOutput output) {
+        return new ConsultaResponseDTO(
+                output.id(),
+                output.pacienteId(),
+                output.medicoId(),
+                output.dataHora(),
+                output.especialidade(),
+                output.status()
+        );
     }
 }

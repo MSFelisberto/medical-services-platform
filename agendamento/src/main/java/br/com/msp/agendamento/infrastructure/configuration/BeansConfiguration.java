@@ -1,10 +1,8 @@
 package br.com.msp.agendamento.infrastructure.configuration;
 
-import br.com.msp.agendamento.application.gateways.ConsultaGateway;
-import br.com.msp.agendamento.application.gateways.PacienteGateway;
-import br.com.msp.agendamento.application.usecases.*;
-import br.com.msp.agendamento.infrastructure.adapters.inbound.AgendamentoUseCaseImpl;
-import br.com.msp.agendamento.infrastructure.producer.NotificationProducer;
+import br.com.msp.agendamento.application.ports.inbound.AgendamentoUseCase;
+import br.com.msp.agendamento.application.ports.outbound.*;
+import br.com.msp.agendamento.application.services.AgendamentoUseCaseImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -12,9 +10,15 @@ import org.springframework.context.annotation.Configuration;
 public class BeansConfiguration {
 
     @Bean
-    public AgendamentoUseCase agendamentoUseCase(ConsultaGateway consultaGateway,
-                                                 PacienteGateway pacienteGateway,
-                                                 NotificationProducer notificationProducer) {
-        return new AgendamentoUseCaseImpl(consultaGateway, pacienteGateway, notificationProducer);
+    public AgendamentoUseCase agendamentoUseCase(
+            ConsultaRepository consultaRepository,
+            PacienteService pacienteService,
+            NotificationService notificationService) {
+
+        return new AgendamentoUseCaseImpl(
+                consultaRepository,
+                pacienteService,
+                notificationService
+        );
     }
 }

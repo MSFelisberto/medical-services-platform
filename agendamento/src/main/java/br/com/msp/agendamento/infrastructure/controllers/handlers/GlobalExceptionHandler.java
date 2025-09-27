@@ -1,8 +1,9 @@
 package br.com.msp.agendamento.infrastructure.controllers.handlers;
 
 import br.com.msp.agendamento.domain.exception.AuthorizationException;
+import br.com.msp.agendamento.domain.exception.ConsultaBusinessException;
+import br.com.msp.agendamento.domain.exception.ConsultaNotFoundException;
 import br.com.msp.agendamento.domain.exception.PacienteNotFoundException;
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -21,10 +22,10 @@ public class GlobalExceptionHandler {
         );
     }
 
-    @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity<Map<String, String>> handleEntityNotFoundException(EntityNotFoundException ex) {
+    @ExceptionHandler(ConsultaNotFoundException.class)
+    public ResponseEntity<Map<String, String>> handleConsultaNotFoundException(ConsultaNotFoundException ex) {
         return new ResponseEntity<>(
-                Map.of("error", "Recurso Não Encontrado", "message", ex.getMessage()),
+                Map.of("error", "Consulta Não Encontrada", "message", ex.getMessage()),
                 HttpStatus.NOT_FOUND
         );
     }
@@ -33,6 +34,22 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Map<String, String>> handlePacienteNotFoundException(PacienteNotFoundException ex) {
         return new ResponseEntity<>(
                 Map.of("error", "Paciente Não Encontrado", "message", ex.getMessage()),
+                HttpStatus.BAD_REQUEST
+        );
+    }
+
+    @ExceptionHandler(ConsultaBusinessException.class)
+    public ResponseEntity<Map<String, String>> handleConsultaBusinessException(ConsultaBusinessException ex) {
+        return new ResponseEntity<>(
+                Map.of("error", "Regra de Negócio Violada", "message", ex.getMessage()),
+                HttpStatus.BAD_REQUEST
+        );
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<Map<String, String>> handleIllegalArgumentException(IllegalArgumentException ex) {
+        return new ResponseEntity<>(
+                Map.of("error", "Argumento Inválido", "message", ex.getMessage()),
                 HttpStatus.BAD_REQUEST
         );
     }

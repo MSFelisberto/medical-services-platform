@@ -20,9 +20,6 @@ public class AuthenticatedUser {
         return id;
     }
 
-    public String getUserEmail() {
-        return userEmail;
-    }
 
     public boolean hasRole(String role) {
         return roles.contains("ROLE_" + role);
