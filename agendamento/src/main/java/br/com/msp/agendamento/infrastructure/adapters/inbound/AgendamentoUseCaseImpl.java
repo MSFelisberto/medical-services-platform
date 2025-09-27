@@ -5,6 +5,7 @@ import br.com.msp.agendamento.application.dto.AuthenticatedUser;
 import br.com.msp.agendamento.application.dto.ConsultaOutput;
 import br.com.msp.agendamento.application.dto.ReagendarConsultaInput;
 import br.com.msp.agendamento.application.gateways.ConsultaGateway;
+import br.com.msp.agendamento.application.gateways.PacienteGateway;
 import br.com.msp.agendamento.application.usecases.*;
 import br.com.msp.agendamento.infrastructure.producer.NotificationProducer;
 import org.springframework.security.core.parameters.P;
@@ -17,8 +18,8 @@ public class AgendamentoUseCaseImpl implements AgendamentoUseCase {
     private final CancelarConsultaUseCase cancelarConsultaUseCase;
     private final ListarConsultasPorPacienteUseCase listarConsultasPorPacienteUseCase;
 
-    public AgendamentoUseCaseImpl(ConsultaGateway consultaGateway, NotificationProducer notificationProducer) {
-        this.agendarConsultaUseCase = new AgendarConsultaUseCase(consultaGateway,notificationProducer);
+    public AgendamentoUseCaseImpl(ConsultaGateway consultaGateway, PacienteGateway pacienteGateway, NotificationProducer notificationProducer) {
+        this.agendarConsultaUseCase = new AgendarConsultaUseCase(consultaGateway, pacienteGateway,notificationProducer);
         this.reagendarConsultaUseCase = new ReagendarConsultaUseCase(consultaGateway,notificationProducer);
         this.cancelarConsultaUseCase = new CancelarConsultaUseCase(consultaGateway,notificationProducer);
         this.listarConsultasPorPacienteUseCase = new ListarConsultasPorPacienteUseCase(consultaGateway,notificationProducer);
@@ -43,4 +44,6 @@ public class AgendamentoUseCaseImpl implements AgendamentoUseCase {
     public List<ConsultaOutput> listarConsultasPorPaciente(Long pacienteId, AuthenticatedUser currentUser) {
         return listarConsultasPorPacienteUseCase.executar(pacienteId, currentUser);
     }
+
+
 }

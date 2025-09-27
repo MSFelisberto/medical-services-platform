@@ -54,7 +54,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(@NonNull HttpServletRequest request) throws ServletException {
-        return request.getRequestURI().contains("/auth/login");
+        String path = request.getRequestURI();
+
+        return path.contains("/auth/login") || path.contains("/internal/");
     }
 
     private String getJwtFromRequest(HttpServletRequest request) {

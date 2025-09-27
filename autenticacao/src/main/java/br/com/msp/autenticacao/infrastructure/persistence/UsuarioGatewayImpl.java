@@ -36,4 +36,16 @@ public class UsuarioGatewayImpl implements UsuarioGateway {
         return repository.findByEmail(email)
                 .map(entity -> new Usuario(entity.getEmail(), entity.getSenha(), entity.getPerfil()));
     }
+
+    @Override
+    public Optional<Usuario> findById(Long id) {
+        return repository.findById(id)
+                .map(this::entityToDomain);
+    }
+
+    private Usuario entityToDomain(UsuarioEntity entity) {
+        Usuario usuario = new Usuario(entity.getEmail(), entity.getSenha(), entity.getPerfil());
+        usuario.setId(entity.getId());
+        return usuario;
+    }
 }

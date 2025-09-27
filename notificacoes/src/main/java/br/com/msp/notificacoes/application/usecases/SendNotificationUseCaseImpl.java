@@ -10,7 +10,7 @@ import java.util.logging.Logger;
 public class SendNotificationUseCaseImpl implements SendNotificationUseCase {
 
     @Override
-    public void sendNotification(ConsultaInput consulta) {
-        log.info("[SendNotificationUseCaseImpl] Enviando e-mail de agendamento");
+    public void sendNotification(ConsultaInput consulta, String topico) {
+        log.info("[SendNotificationUseCaseImpl] Enviando e-mail de " + topico);
     }
 }
