@@ -4,14 +4,19 @@ import br.com.msp.agendamento.application.dto.ConsultaOutput;
 import br.com.msp.agendamento.application.dto.ReagendarConsultaInput;
 import br.com.msp.agendamento.application.gateways.ConsultaGateway;
 import br.com.msp.agendamento.domain.model.Consulta;
+import br.com.msp.agendamento.infrastructure.producer.NotificationProducer;
 import jakarta.persistence.EntityNotFoundException;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class ReagendarConsultaUseCase {
 
     private final ConsultaGateway consultaGateway;
+    private final NotificationProducer notificationProducer;
 
-    public ReagendarConsultaUseCase(ConsultaGateway consultaGateway) {
+    public ReagendarConsultaUseCase(ConsultaGateway consultaGateway, NotificationProducer notificationProducer) {
         this.consultaGateway = consultaGateway;
+        this.notificationProducer = notificationProducer;
     }
 
     public ConsultaOutput executar(ReagendarConsultaInput input) {
@@ -25,7 +30,8 @@ public class ReagendarConsultaUseCase {
 
         Consulta consultaReagendada = consultaGateway.reagendar(consulta);
 
-        //TODO: Enviar evento de reagendamento para a fila de Notificações
+        log.info("[ReagendarConsultaUseCase] Enviando notificação de reagendamento: id {}", consulta.getId());
+        notificationProducer.sendReagendar(consulta);
 
         return new ConsultaOutput(
                 consultaReagendada.getId(),
