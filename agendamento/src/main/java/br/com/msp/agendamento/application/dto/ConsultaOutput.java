@@ -7,6 +7,6 @@ public record ConsultaOutput(
         Long pacienteId,
         Long medicoId,
         LocalDateTime dataHora,
-        String especialidade
-) {
-}
+        String especialidade,
+        String status
+) {}

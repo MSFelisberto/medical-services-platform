@@ -1,62 +1,120 @@
 package br.com.msp.agendamento.domain.model;
 
+import br.com.msp.agendamento.domain.exception.ConsultaBusinessException;
+
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 public class Consulta {
-
-    private Long id;
-    private Long pacienteId;
-    private Long medicoId;
+    private ConsultaId id;
+    private PacienteId pacienteId;
+    private MedicoId medicoId;
     private LocalDateTime dataHora;
-    private String especialidade;
-    private boolean cancelada;
+    private Especialidade especialidade;
+    private StatusConsulta status;
 
+    public Consulta(PacienteId pacienteId,
+                    MedicoId medicoId,
+                    LocalDateTime dataHora,
+                    Especialidade especialidade)
+    {
+        validarDadosObrigatorios(pacienteId, medicoId, dataHora, especialidade);
+        validarDataFutura(dataHora);
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Long getPacienteId() {
-        return pacienteId;
-    }
-
-    public void setPacienteId(Long pacienteId) {
         this.pacienteId = pacienteId;
-    }
-
-    public Long getMedicoId() {
-        return medicoId;
-    }
-
-    public void setMedicoId(Long medicoId) {
         this.medicoId = medicoId;
-    }
-
-    public LocalDateTime getDataHora() {
-        return dataHora;
-    }
-
-    public void setDataHora(LocalDateTime dataHora) {
         this.dataHora = dataHora;
-    }
-
-    public String getEspecialidade() {
-        return especialidade;
-    }
-
-    public void setEspecialidade(String especialidade) {
         this.especialidade = especialidade;
+        this.status = StatusConsulta.AGENDADA;
     }
 
-    public boolean isCancelada() {
-        return cancelada;
+    public Consulta(ConsultaId id,
+                    PacienteId pacienteId,
+                    MedicoId medicoId,
+                    LocalDateTime dataHora,
+                    Especialidade especialidade,
+                    StatusConsulta status)
+    {
+        this.id = id;
+        this.pacienteId = pacienteId;
+        this.medicoId = medicoId;
+        this.dataHora = dataHora;
+        this.especialidade = especialidade;
+        this.status = status;
     }
 
-    public void setCancelada(boolean cancelada) {
-        this.cancelada = cancelada;
+    public void reagendar(LocalDateTime novaDataHora,
+                          MedicoId novoMedico,
+                          Especialidade novaEspecialidade)
+    {
+        if (status == StatusConsulta.CANCELADA) {
+            throw new ConsultaBusinessException("Não é possível reagendar uma consulta cancelada");
+        }
+
+        validarDataFutura(novaDataHora);
+
+        this.dataHora = novaDataHora;
+        this.medicoId = novoMedico;
+        this.especialidade = novaEspecialidade;
+    }
+
+    public void cancelar() {
+        if (status == StatusConsulta.CANCELADA) {
+            throw new ConsultaBusinessException("Consulta já está cancelada");
+        }
+
+        if (dataHora.isBefore(LocalDateTime.now().plusHours(24))) {
+            throw new ConsultaBusinessException("Não é possível cancelar consulta com menos de 24h de antecedência");
+        }
+
+        this.status = StatusConsulta.CANCELADA;
+    }
+
+
+    private void validarDadosObrigatorios(PacienteId pacienteId,
+                                          MedicoId medicoId,
+                                          LocalDateTime dataHora,
+                                          Especialidade especialidade)
+    {
+        if (pacienteId == null) {
+            throw new ConsultaBusinessException("Paciente é obrigatório");
+        }
+        if (medicoId == null) {
+            throw new ConsultaBusinessException("Médico é obrigatório");
+        }
+        if (dataHora == null) {
+            throw new ConsultaBusinessException("Data e hora são obrigatórias");
+        }
+        if (especialidade == null) {
+            throw new ConsultaBusinessException("Especialidade é obrigatória");
+        }
+    }
+
+    private void validarDataFutura(LocalDateTime dataHora) {
+        if (dataHora.isBefore(LocalDateTime.now())) {
+            throw new ConsultaBusinessException("Data da consulta deve ser futura");
+        }
+    }
+
+    public ConsultaId getId() { return id; }
+    public PacienteId getPacienteId() { return pacienteId; }
+    public MedicoId getMedicoId() { return medicoId; }
+    public LocalDateTime getDataHora() { return dataHora; }
+    public Especialidade getEspecialidade() { return especialidade; }
+    public StatusConsulta getStatus() { return status; }
+
+    public void setId(ConsultaId id) { this.id = id; }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Consulta consulta = (Consulta) o;
+        return Objects.equals(id, consulta.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }
