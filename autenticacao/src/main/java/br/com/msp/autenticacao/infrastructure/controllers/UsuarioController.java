@@ -1,8 +1,10 @@
 package br.com.msp.autenticacao.infrastructure.controllers;
 
 import br.com.msp.autenticacao.application.usecases.CadastrarUsuarioUseCase;
+import br.com.msp.autenticacao.application.usecases.ValidarPacienteUseCase;
 import br.com.msp.autenticacao.infrastructure.controllers.dto.UsuarioRequestDTO;
 import br.com.msp.autenticacao.infrastructure.controllers.mappers.UsuarioMapper;
+import br.com.msp.autenticacao.infrastructure.persistence.UsuarioRepository;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

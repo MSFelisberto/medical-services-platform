@@ -7,4 +7,5 @@ import java.util.Optional;
 public interface UsuarioGateway {
     Usuario cadastrar(Usuario usuario);
     Optional<Usuario> findByEmail(String email);
+    Optional<Usuario> findById(Long id);
 }

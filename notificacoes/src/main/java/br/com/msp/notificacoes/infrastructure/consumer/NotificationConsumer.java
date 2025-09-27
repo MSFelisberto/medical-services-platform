@@ -25,7 +25,7 @@ public class NotificationConsumer {
                 consultaDTO.medicoId(),
                 consultaDTO.dataHora(),
                 consultaDTO.especialidade()
-        ));
+        ), "agendamento");
     }
 
     @RabbitListener(queues = RabbitConfig.QUEUE_CANCELAR)
@@ -36,7 +36,7 @@ public class NotificationConsumer {
                 consultaDTO.medicoId(),
                 consultaDTO.dataHora(),
                 consultaDTO.especialidade()
-        ));
+        ), "cancelamento");
     }
 
     @RabbitListener(queues = RabbitConfig.QUEUE_REAGENDAR)
@@ -47,17 +47,17 @@ public class NotificationConsumer {
                 consultaDTO.medicoId(),
                 consultaDTO.dataHora(),
                 consultaDTO.especialidade()
-        ));
+        ), "reagendamento");
     }
 
-    @RabbitListener(queues = RabbitConfig.QUEUE_HISTORICO)
-    public void consumeHistorico(ConsultaDTO consultaDTO) {
-        log.info("[HISTORICO] Mensagem recebida: {}", consultaDTO);
-        this.sendNotificationUseCase.sendNotification(new ConsultaInput(
-                consultaDTO.pacienteId(),
-                consultaDTO.medicoId(),
-                consultaDTO.dataHora(),
-                consultaDTO.especialidade()
-        ));
-    }
+//    @RabbitListener(queues = RabbitConfig.QUEUE_HISTORICO)
+//    public void consumeHistorico(ConsultaDTO consultaDTO) {
+//        log.info("[HISTORICO] Mensagem recebida: {}", consultaDTO);
+//        this.sendNotificationUseCase.sendNotification(new ConsultaInput(
+//                consultaDTO.pacienteId(),
+//                consultaDTO.medicoId(),
+//                consultaDTO.dataHora(),
+//                consultaDTO.especialidade()
+//        ));
+//    }
 }

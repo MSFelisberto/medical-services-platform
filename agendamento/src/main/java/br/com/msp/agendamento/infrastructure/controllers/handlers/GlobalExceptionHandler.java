@@ -1,6 +1,7 @@
 package br.com.msp.agendamento.infrastructure.controllers.handlers;
 
 import br.com.msp.agendamento.domain.exception.AuthorizationException;
+import br.com.msp.agendamento.domain.exception.PacienteNotFoundException;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +26,14 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(
                 Map.of("error", "Recurso Não Encontrado", "message", ex.getMessage()),
                 HttpStatus.NOT_FOUND
+        );
+    }
+
+    @ExceptionHandler(PacienteNotFoundException.class)
+    public ResponseEntity<Map<String, String>> handlePacienteNotFoundException(PacienteNotFoundException ex) {
+        return new ResponseEntity<>(
+                Map.of("error", "Paciente Não Encontrado", "message", ex.getMessage()),
+                HttpStatus.BAD_REQUEST
         );
     }
 }
