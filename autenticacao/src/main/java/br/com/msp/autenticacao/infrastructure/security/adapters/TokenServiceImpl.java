@@ -1,22 +1,21 @@
-package br.com.msp.autenticacao.infrastructure.security;
+package br.com.msp.autenticacao.infrastructure.security.adapters;
 
+import br.com.msp.autenticacao.application.ports.outbound.TokenService;
+import br.com.msp.autenticacao.domain.model.Usuario;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Component
-public class JwtTokenProvider {
+public class TokenServiceImpl implements TokenService {
 
     @Value("${jwt.secret}")
     private String jwtSecret;
@@ -26,29 +25,29 @@ public class JwtTokenProvider {
 
     private SecretKey key;
 
-    public String generateToken(Authentication authentication) {
-        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+    @Override
+    public String generateToken(Usuario usuario) {
         Date now = new Date();
         Date expirationDate = new Date(now.getTime() + jwtExpirationInMs);
-
-        List<String> roles = userDetails.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.toList());
 
         if (this.key == null) {
             this.key = Keys.hmacShaKeyFor(jwtSecret.getBytes());
         }
 
+        String roleStr = "ROLE_" + usuario.getPerfil().name();
+        List<String> roles = List.of(roleStr);
+
         return Jwts.builder()
-                .setSubject(userDetails.getUsername())
+                .setSubject(usuario.getEmail().getValue())
+                .claim("userId", usuario.getId().getValue())
                 .claim("roles", roles)
-                .claim("userId", userDetails.getId())
                 .setIssuedAt(now)
                 .setExpiration(expirationDate)
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
     }
 
+    @Override
     public boolean validateToken(String token) {
         try {
             getSecretKey();
@@ -60,14 +59,30 @@ public class JwtTokenProvider {
         }
     }
 
+    @Override
     public String getEmailFromToken(String token) {
         getSecretKey();
+        return getClaims(token).getSubject();
+    }
+
+    @Override
+    public Long getUserIdFromToken(String token) {
+        getSecretKey();
+        return getClaims(token).get("userId", Long.class);
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<String> getRolesFromToken(String token) {
+        getSecretKey();
+        return getClaims(token).get("roles", List.class);
+    }
+
+    private Claims getClaims(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(this.key)
                 .build()
                 .parseClaimsJws(token)
-                .getBody()
-                .getSubject();
+                .getBody();
     }
 
     private void getSecretKey() {

@@ -1,42 +1,39 @@
 package br.com.msp.autenticacao.infrastructure.controllers;
 
+import br.com.msp.autenticacao.application.dto.AutenticarUsuarioCommand;
+import br.com.msp.autenticacao.application.dto.AuthTokenOutput;
+import br.com.msp.autenticacao.application.ports.inbound.AutenticacaoUseCase;
 import br.com.msp.autenticacao.infrastructure.controllers.dto.AuthRequestDTO;
 import br.com.msp.autenticacao.infrastructure.controllers.dto.AuthResponseDTO;
-import br.com.msp.autenticacao.infrastructure.security.JwtTokenProvider;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
 
+    private final AutenticacaoUseCase autenticacaoUseCase;
 
-    private final AuthenticationManager authenticationManager;
-    private final JwtTokenProvider jwtTokenProvider;
-
-    public AuthController(AuthenticationManager authenticationManager, JwtTokenProvider jwtTokenProvider) {
-        this.authenticationManager = authenticationManager;
-        this.jwtTokenProvider = jwtTokenProvider;
+    public AuthController(AutenticacaoUseCase autenticacaoUseCase) {
+        this.autenticacaoUseCase = autenticacaoUseCase;
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponseDTO> authenticateUser(@RequestBody @Valid AuthRequestDTO authRequestDTO) {
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        authRequestDTO.email(),
-                        authRequestDTO.senha()
-                )
+    public ResponseEntity<AuthResponseDTO> login(@RequestBody @Valid AuthRequestDTO request) {
+        AutenticarUsuarioCommand command = new AutenticarUsuarioCommand(
+                request.email(),
+                request.senha()
         );
 
-        String jwt = jwtTokenProvider.generateToken(authentication);
-        return ResponseEntity.ok(new AuthResponseDTO(jwt));
-    }
+        AuthTokenOutput output = autenticacaoUseCase.autenticar(command);
 
+        AuthResponseDTO response = new AuthResponseDTO(
+                output.token(),
+                output.type(),
+                output.expiresIn()
+        );
+
+        return ResponseEntity.ok(response);
+    }
 }
