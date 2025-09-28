@@ -7,6 +7,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.server.ServerWebExchange;
 
@@ -27,30 +28,41 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
     @Override
     public GatewayFilter apply(Config config) {
         return ((exchange, chain) -> {
-            if (validator.isSecured.test(exchange.getRequest())) {
+            ServerHttpRequest request = exchange.getRequest();
 
-                if (!exchange.getRequest().getHeaders().containsKey(HttpHeaders.AUTHORIZATION)) {
+            if (validator.isSecured.test(request)) {
+
+                List<String> authHeaders = request.getHeaders().get(HttpHeaders.AUTHORIZATION);
+                if (authHeaders == null || authHeaders.isEmpty()) {
                     throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Missing authorization header");
                 }
 
-                String authHeader = exchange.getRequest().getHeaders().get(HttpHeaders.AUTHORIZATION).getFirst();
+                String authHeader = authHeaders.getFirst();
                 String token = null;
-                if (authHeader != null && authHeader.startsWith("Bearer ")) {
+
+                if (StringUtils.hasText(authHeader) && authHeader.startsWith("Bearer ")) {
                     token = authHeader.substring(7);
+                } else {
+                    throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid authorization header format");
                 }
 
                 try {
-                    if (jwtUtil.isInvalid(token)) {
-                        throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Token expired");
+                    if (StringUtils.hasText(token) && jwtUtil.isInvalid(token)) {
+                        throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Token expired or invalid");
                     }
 
                     String email = jwtUtil.getEmailFromToken(token);
                     List<String> roles = jwtUtil.getRolesFromToken(token);
-                    Long id = jwtUtil.getUserIdFromToken(token);
+                    Long userId = jwtUtil.getUserIdFromToken(token);
+
+                    if (!StringUtils.hasText(email) || userId == null || roles == null || roles.isEmpty()) {
+                        throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid token data");
+                    }
+
                     String rolesString = String.join(",", roles);
 
-                    ServerHttpRequest mutatedRequest = exchange.getRequest().mutate()
-                            .header("X-User-ID", String.valueOf(id))
+                    ServerHttpRequest mutatedRequest = request.mutate()
+                            .header("X-User-ID", String.valueOf(userId))
                             .header("X-User-Email", email)
                             .header("X-User-Roles", rolesString)
                             .build();
@@ -59,10 +71,13 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
 
                     return chain.filter(mutatedExchange);
 
+                } catch (ResponseStatusException e) {
+                    throw e;
                 } catch (Exception e) {
-                    throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized access to application");
+                    throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized access to application: " + e.getMessage());
                 }
             }
+
             return chain.filter(exchange);
         });
     }

@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
 import java.util.Date;
 import java.util.List;
 
@@ -28,7 +27,8 @@ public class JwtUtil {
     public Claims getAllClaimsFromToken(String token) {
         init();
         return Jwts.parserBuilder()
-                .setSigningKey(key).build()
+                .setSigningKey(key)
+                .build()
                 .parseClaimsJws(token)
                 .getBody();
     }
@@ -43,7 +43,17 @@ public class JwtUtil {
 
     @SuppressWarnings("unchecked")
     public List<String> getRolesFromToken(String token) {
-        return getAllClaimsFromToken(token).get("roles", List.class);
+        Object rolesObj = getAllClaimsFromToken(token).get("roles");
+
+        if (rolesObj instanceof List) {
+            return (List<String>) rolesObj;
+        }
+
+        if (rolesObj instanceof String) {
+            return List.of((String) rolesObj);
+        }
+
+        return List.of();
     }
 
     public Date getExpirationDateFromToken(String token) {
@@ -51,12 +61,15 @@ public class JwtUtil {
     }
 
     public boolean isInvalid(String token) {
-        return this.isTokenExpired(token);
+        try {
+            return this.isTokenExpired(token);
+        } catch (Exception e) {
+            return true;
+        }
     }
 
     private boolean isTokenExpired(String token) {
         final Date expiration = getExpirationDateFromToken(token);
         return expiration.before(new Date());
     }
-
 }

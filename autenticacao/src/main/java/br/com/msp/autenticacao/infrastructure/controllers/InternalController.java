@@ -1,25 +1,24 @@
 package br.com.msp.autenticacao.infrastructure.controllers;
 
-import br.com.msp.autenticacao.application.usecases.ValidarPacienteUseCase;
+import br.com.msp.autenticacao.application.dto.ValidarPacienteQuery;
+import br.com.msp.autenticacao.application.ports.inbound.UsuarioUseCase;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/internal")
 public class InternalController {
 
-    private final ValidarPacienteUseCase validarPacienteUseCase;
+    private final UsuarioUseCase usuarioUseCase;
 
-    public InternalController(ValidarPacienteUseCase validarPacienteUseCase) {
-        this.validarPacienteUseCase = validarPacienteUseCase;
+    public InternalController(UsuarioUseCase usuarioUseCase) {
+        this.usuarioUseCase = usuarioUseCase;
     }
 
     @GetMapping("/usuarios/pacientes/{pacienteId}/exists")
     public ResponseEntity<Boolean> existePaciente(@PathVariable Long pacienteId) {
-        boolean exists = validarPacienteUseCase.existsPaciente(pacienteId);
+        ValidarPacienteQuery query = new ValidarPacienteQuery(pacienteId);
+        boolean exists = usuarioUseCase.validarPacienteExiste(query);
         return ResponseEntity.ok(exists);
     }
 }

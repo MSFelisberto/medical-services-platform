@@ -1,6 +1,6 @@
 package br.com.msp.autenticacao.infrastructure.controllers.dto;
 
-import br.com.msp.autenticacao.domain.Perfil;
+import br.com.msp.autenticacao.domain.model.Perfil;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

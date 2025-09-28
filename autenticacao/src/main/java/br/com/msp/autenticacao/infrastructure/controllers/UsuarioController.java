@@ -1,10 +1,10 @@
 package br.com.msp.autenticacao.infrastructure.controllers;
 
-import br.com.msp.autenticacao.application.usecases.CadastrarUsuarioUseCase;
-import br.com.msp.autenticacao.application.usecases.ValidarPacienteUseCase;
+import br.com.msp.autenticacao.application.dto.CadastrarUsuarioCommand;
+import br.com.msp.autenticacao.application.dto.UsuarioOutput;
+import br.com.msp.autenticacao.application.ports.inbound.UsuarioUseCase;
 import br.com.msp.autenticacao.infrastructure.controllers.dto.UsuarioRequestDTO;
-import br.com.msp.autenticacao.infrastructure.controllers.mappers.UsuarioMapper;
-import br.com.msp.autenticacao.infrastructure.persistence.UsuarioRepository;
+import br.com.msp.autenticacao.infrastructure.controllers.dto.UsuarioResponseDTO;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,22 +15,29 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/usuarios")
 public class UsuarioController {
 
-    private final CadastrarUsuarioUseCase cadastrarUsuarioUseCase;
-    private final UsuarioMapper usuarioMapper;
+    private final UsuarioUseCase usuarioUseCase;
 
-    public UsuarioController(CadastrarUsuarioUseCase cadastrarUsuarioUseCase, UsuarioMapper usuarioMapper) {
-        this.cadastrarUsuarioUseCase = cadastrarUsuarioUseCase;
-        this.usuarioMapper = usuarioMapper;
+    public UsuarioController(UsuarioUseCase usuarioUseCase) {
+        this.usuarioUseCase = usuarioUseCase;
     }
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<String> cadastrar(@RequestBody @Valid UsuarioRequestDTO resquestDTO) {
+    public ResponseEntity<UsuarioResponseDTO> cadastrar(@RequestBody @Valid UsuarioRequestDTO request) {
+        CadastrarUsuarioCommand command = new CadastrarUsuarioCommand(
+                request.email(),
+                request.senha(),
+                request.perfil()
+        );
 
-        var input = usuarioMapper.toInput(resquestDTO);
+        UsuarioOutput output = usuarioUseCase.cadastrarUsuario(command);
 
-        cadastrarUsuarioUseCase.cadastrarUsuario(input);
-        return ResponseEntity.status(HttpStatus.CREATED).body("Usuário cadastrado com sucesso!");
+        UsuarioResponseDTO response = new UsuarioResponseDTO(
+                output.id(),
+                output.email(),
+                output.perfil().name()
+        );
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 }
-
