@@ -49,7 +49,7 @@ public class AutenticacaoUseCaseImpl implements AutenticacaoUseCase {
             Funcionario funcionario = funcionarioOpt.get();
             if (passwordEncoder.matches(senhaRaw, funcionario.getSenha().getValue())) {
                 String token = tokenService.generateTokenForFuncionario(funcionario);
-                return new AuthTokenOutput(token, "Bearer", 86400000L, "FUNCIONARIO");
+                return new AuthTokenOutput(token, "Bearer", 86400000L, funcionario.getTipo().name());
             }
         }
 
