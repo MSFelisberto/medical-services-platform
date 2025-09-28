@@ -1,0 +1,587 @@
+{
+	"info": {
+		"_postman_id": "67ed0001-eb8b-47d8-ab9a-5fb06ec1acdc",
+		"name": "Medical Services Platform",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "29846211",
+		"_collection_link": "https://fiap-team.postman.co/workspace/FIAP---POS-TECH~807ac127-7790-42d7-97ff-4e7e33e8937b/collection/29846211-67ed0001-eb8b-47d8-ab9a-5fb06ec1acdc?action=share&source=collection_link&creator=29846211"
+	},
+	"item": [
+		{
+			"name": "1. Authentication",
+			"item": [
+				{
+					"name": "Login as Medico",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"pm.collectionVariables.set(\"jwt_medico\", jsonData.token);"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"medico@email.com\",\n    \"senha\": \"senha123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/autenticacao/auth/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"autenticacao",
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login as Enfermeiro",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"pm.collectionVariables.set(\"jwt_enfermeiro\", jsonData.token);"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"enfermeiro@email.com\",\n    \"senha\": \"senha123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/autenticacao/auth/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"autenticacao",
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login as Paciente",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"pm.collectionVariables.set(\"jwt_paciente\", jsonData.token);"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"paciente@email.com\",\n    \"senha\": \"senha123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/autenticacao/auth/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"autenticacao",
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "2. Agendamento",
+			"item": [
+				{
+					"name": "Agendar Nova Consulta (Como Medico)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Salva o ID da consulta e do paciente para usar em outros requests",
+									"var jsonData = pm.response.json();",
+									"pm.collectionVariables.set(\"consulta_id\", jsonData.id);",
+									"pm.collectionVariables.set(\"paciente_id\", jsonData.pacienteId);"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt_medico}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"pacienteId\": 1,\n    \"medicoId\": 1,\n    \"dataHora\": \"2025-10-16T10:00:00\",\n    \"especialidade\": \"CARDIOLOGIA\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/agendamento/agendamento",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"agendamento",
+								"agendamento"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Agendar Nova Consulta (Como Enfermeiro)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Salva o ID da consulta e do paciente para usar em outros requests",
+									"var jsonData = pm.response.json();",
+									"pm.collectionVariables.set(\"consulta_id\", jsonData.id);",
+									"pm.collectionVariables.set(\"paciente_id\", jsonData.pacienteId);"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt_enfermeiro}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"pacienteId\": 1,\n    \"medicoId\": 2,\n    \"dataHora\": \"2026-10-25T10:30:00\",\n    \"especialidade\": \"CARDIOLOGIA\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/agendamento/agendamento",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"agendamento",
+								"agendamento"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Reagendar Consulta (Como Medico)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt_medico}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"medicoId\": 3,\n    \"dataHora\": \"2026-10-25T11:00:00\",\n    \"especialidade\": \"CLINICA GERAL\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/agendamento/agendamento/{{consulta_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"agendamento",
+								"agendamento",
+								"{{consulta_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Reagendar Consulta (Como Enfermeiro)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt_enfermeiro}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"medicoId\": 2,\n    \"dataHora\": \"2026-10-25T11:00:00\",\n    \"especialidade\": \"CARDIOLOGIA GERAL\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/agendamento/agendamento/{{consulta_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"agendamento",
+								"agendamento",
+								"{{consulta_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Listar Consultas por Paciente (as Paciente)",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt_paciente}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/agendamento/agendamento/paciente/{{paciente_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"agendamento",
+								"agendamento",
+								"paciente",
+								"{{paciente_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Listar Consultas por Paciente (as Medico)",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt_medico}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/agendamento/agendamento/paciente/{{paciente_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"agendamento",
+								"agendamento",
+								"paciente",
+								"{{paciente_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Listar Consultas por Paciente (as Enfermeiro)",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt_enfermeiro}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/agendamento/agendamento/paciente/{{paciente_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"agendamento",
+								"agendamento",
+								"paciente",
+								"{{paciente_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Cancelar Consulta (Como Medico)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt_medico}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/agendamento/agendamento/{{consulta_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"agendamento",
+								"agendamento",
+								"{{consulta_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Cancelar Consulta (Como Enfermeiro)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt_enfermeiro}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/agendamento/agendamento/{{consulta_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"agendamento",
+								"agendamento",
+								"{{consulta_id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "3. Historico",
+			"item": [
+				{
+					"name": "test historico",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt_paciente}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "query {\n    historicoPorPaciente(pacienteId: 1) {\n        id, dataRealizacao, especialidade, diagnostico, prescricao, observacoes\n    }\n}",
+								"variables": ""
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/historico/graphql",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"historico",
+								"graphql"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8080",
+			"type": "string"
+		},
+		{
+			"key": "jwt_medico",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "jwt_enfermeiro",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "jwt_paciente",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "consulta_id",
+			"value": "1",
+			"type": "string"
+		},
+		{
+			"key": "paciente_id",
+			"value": "1",
+			"type": "string"
+		}
+	]
+}
