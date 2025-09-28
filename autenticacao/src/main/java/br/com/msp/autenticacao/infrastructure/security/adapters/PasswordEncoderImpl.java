@@ -1,7 +1,7 @@
 package br.com.msp.autenticacao.infrastructure.security.adapters;
 
 import br.com.msp.autenticacao.application.ports.outbound.PasswordEncoder;
-import br.com.msp.autenticacao.domain.model.Senha;
+import br.com.msp.autenticacao.domain.shared.model.Senha;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 

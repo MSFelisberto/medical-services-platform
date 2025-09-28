@@ -1,8 +1,10 @@
 package br.com.msp.autenticacao.infrastructure.controllers.handlers;
 
-import br.com.msp.autenticacao.domain.exception.EmailJaExisteException;
-import br.com.msp.autenticacao.domain.exception.UsuarioBusinessException;
-import br.com.msp.autenticacao.domain.exception.UsuarioNotFoundException;
+import br.com.msp.autenticacao.domain.paciente.exception.PacienteBusinessException;
+import br.com.msp.autenticacao.domain.paciente.exception.PacienteNotFoundException;
+import br.com.msp.autenticacao.domain.funcionario.exception.FuncionarioBusinessException;
+import br.com.msp.autenticacao.domain.funcionario.exception.FuncionarioNotFoundException;
+import br.com.msp.autenticacao.domain.shared.exception.SharedBusinessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -14,26 +16,42 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(EmailJaExisteException.class)
-    public ResponseEntity<Map<String, String>> handleEmailJaExisteException(EmailJaExisteException ex) {
+    @ExceptionHandler(PacienteBusinessException.class)
+    public ResponseEntity<Map<String, String>> handlePacienteBusinessException(PacienteBusinessException ex) {
         return new ResponseEntity<>(
-                Map.of("error", "E-mail já existe", "message", ex.getMessage()),
-                HttpStatus.CONFLICT
+                Map.of("error", "Erro de Paciente", "message", ex.getMessage()),
+                HttpStatus.BAD_REQUEST
         );
     }
 
-    @ExceptionHandler(UsuarioNotFoundException.class)
-    public ResponseEntity<Map<String, String>> handleUsuarioNotFoundException(UsuarioNotFoundException ex) {
+    @ExceptionHandler(PacienteNotFoundException.class)
+    public ResponseEntity<Map<String, String>> handlePacienteNotFoundException(PacienteNotFoundException ex) {
         return new ResponseEntity<>(
-                Map.of("error", "Usuário não encontrado", "message", ex.getMessage()),
+                Map.of("error", "Paciente não encontrado", "message", ex.getMessage()),
                 HttpStatus.NOT_FOUND
         );
     }
 
-    @ExceptionHandler(UsuarioBusinessException.class)
-    public ResponseEntity<Map<String, String>> handleUsuarioBusinessException(UsuarioBusinessException ex) {
+    @ExceptionHandler(FuncionarioBusinessException.class)
+    public ResponseEntity<Map<String, String>> handleFuncionarioBusinessException(FuncionarioBusinessException ex) {
         return new ResponseEntity<>(
-                Map.of("error", "Regra de negócio violada", "message", ex.getMessage()),
+                Map.of("error", "Erro de Funcionário", "message", ex.getMessage()),
+                HttpStatus.BAD_REQUEST
+        );
+    }
+
+    @ExceptionHandler(FuncionarioNotFoundException.class)
+    public ResponseEntity<Map<String, String>> handleFuncionarioNotFoundException(FuncionarioNotFoundException ex) {
+        return new ResponseEntity<>(
+                Map.of("error", "Funcionário não encontrado", "message", ex.getMessage()),
+                HttpStatus.NOT_FOUND
+        );
+    }
+
+    @ExceptionHandler(SharedBusinessException.class)
+    public ResponseEntity<Map<String, String>> handleSharedBusinessException(SharedBusinessException ex) {
+        return new ResponseEntity<>(
+                Map.of("error", "Erro de validação", "message", ex.getMessage()),
                 HttpStatus.BAD_REQUEST
         );
     }

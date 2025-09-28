@@ -17,7 +17,7 @@ public class PacienteServiceImpl implements PacienteService {
 
     public PacienteServiceImpl(
             RestTemplate restTemplate,
-            @Value("${services.paciente.url}") String pacienteServiceUrl) {
+            @Value("${services.autenticacao.url}") String pacienteServiceUrl) {
         this.restTemplate = restTemplate;
         this.pacienteServiceUrl = pacienteServiceUrl;
     }

@@ -1,6 +1,6 @@
 package br.com.msp.autenticacao.infrastructure.controllers;
 
-import br.com.msp.autenticacao.application.dto.AutenticarUsuarioCommand;
+import br.com.msp.autenticacao.application.dto.AutenticarCommand;
 import br.com.msp.autenticacao.application.dto.AuthTokenOutput;
 import br.com.msp.autenticacao.application.ports.inbound.AutenticacaoUseCase;
 import br.com.msp.autenticacao.infrastructure.controllers.dto.AuthRequestDTO;
@@ -21,7 +21,7 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<AuthResponseDTO> login(@RequestBody @Valid AuthRequestDTO request) {
-        AutenticarUsuarioCommand command = new AutenticarUsuarioCommand(
+        AutenticarCommand command = new AutenticarCommand(
                 request.email(),
                 request.senha()
         );
@@ -31,7 +31,8 @@ public class AuthController {
         AuthResponseDTO response = new AuthResponseDTO(
                 output.token(),
                 output.type(),
-                output.expiresIn()
+                output.expiresIn(),
+                output.userType()
         );
 
         return ResponseEntity.ok(response);

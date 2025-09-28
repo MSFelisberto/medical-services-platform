@@ -1,7 +1,8 @@
 package br.com.msp.autenticacao.infrastructure.security.adapters;
 
 import br.com.msp.autenticacao.application.ports.outbound.TokenService;
-import br.com.msp.autenticacao.domain.model.Usuario;
+import br.com.msp.autenticacao.domain.paciente.model.Paciente;
+import br.com.msp.autenticacao.domain.funcionario.model.Funcionario;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -26,7 +27,7 @@ public class TokenServiceImpl implements TokenService {
     private SecretKey key;
 
     @Override
-    public String generateToken(Usuario usuario) {
+    public String generateTokenForPaciente(Paciente paciente) {
         Date now = new Date();
         Date expirationDate = new Date(now.getTime() + jwtExpirationInMs);
 
@@ -34,12 +35,33 @@ public class TokenServiceImpl implements TokenService {
             this.key = Keys.hmacShaKeyFor(jwtSecret.getBytes());
         }
 
-        String roleStr = "ROLE_" + usuario.getPerfil().name();
+        return Jwts.builder()
+                .setSubject(paciente.getEmail().getValue())
+                .claim("userId", paciente.getId().getValue())
+                .claim("userType", "PACIENTE")
+                .claim("roles", List.of("ROLE_PACIENTE"))
+                .setIssuedAt(now)
+                .setExpiration(expirationDate)
+                .signWith(key, SignatureAlgorithm.HS256)
+                .compact();
+    }
+
+    @Override
+    public String generateTokenForFuncionario(Funcionario funcionario) {
+        Date now = new Date();
+        Date expirationDate = new Date(now.getTime() + jwtExpirationInMs);
+
+        if (this.key == null) {
+            this.key = Keys.hmacShaKeyFor(jwtSecret.getBytes());
+        }
+
+        String roleStr = "ROLE_" + funcionario.getTipo().name();
         List<String> roles = List.of(roleStr);
 
         return Jwts.builder()
-                .setSubject(usuario.getEmail().getValue())
-                .claim("userId", usuario.getId().getValue())
+                .setSubject(funcionario.getEmail().getValue())
+                .claim("userId", funcionario.getId().getValue())
+                .claim("userType", "FUNCIONARIO")
                 .claim("roles", roles)
                 .setIssuedAt(now)
                 .setExpiration(expirationDate)
@@ -69,6 +91,12 @@ public class TokenServiceImpl implements TokenService {
     public Long getUserIdFromToken(String token) {
         getSecretKey();
         return getClaims(token).get("userId", Long.class);
+    }
+
+    @Override
+    public String getUserTypeFromToken(String token) {
+        getSecretKey();
+        return getClaims(token).get("userType", String.class);
     }
 
     @SuppressWarnings("unchecked")
