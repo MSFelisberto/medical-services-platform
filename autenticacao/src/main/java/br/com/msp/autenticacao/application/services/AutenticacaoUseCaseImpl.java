@@ -1,50 +1,58 @@
 package br.com.msp.autenticacao.application.services;
 
-import br.com.msp.autenticacao.application.dto.AutenticarUsuarioCommand;
+import br.com.msp.autenticacao.application.dto.AutenticarCommand;
 import br.com.msp.autenticacao.application.dto.AuthTokenOutput;
 import br.com.msp.autenticacao.application.ports.inbound.AutenticacaoUseCase;
-import br.com.msp.autenticacao.application.ports.outbound.PasswordEncoder;
-import br.com.msp.autenticacao.application.ports.outbound.TokenService;
-import br.com.msp.autenticacao.application.ports.outbound.UsuarioRepository;
-import br.com.msp.autenticacao.domain.exception.UsuarioNotFoundException;
-import br.com.msp.autenticacao.domain.model.Email;
-import br.com.msp.autenticacao.domain.model.Senha;
-import br.com.msp.autenticacao.domain.model.Usuario;
+import br.com.msp.autenticacao.application.ports.outbound.*;
+import br.com.msp.autenticacao.domain.paciente.model.Paciente;
+import br.com.msp.autenticacao.domain.funcionario.model.Funcionario;
+import br.com.msp.autenticacao.domain.shared.model.Email;
+import br.com.msp.autenticacao.domain.shared.model.Senha;
 import org.springframework.security.authentication.BadCredentialsException;
 
 public class AutenticacaoUseCaseImpl implements AutenticacaoUseCase {
 
-    private final UsuarioRepository usuarioRepository;
+    private final PacienteRepository pacienteRepository;
+    private final FuncionarioRepository funcionarioRepository;
     private final PasswordEncoder passwordEncoder;
     private final TokenService tokenService;
 
     public AutenticacaoUseCaseImpl(
-            UsuarioRepository usuarioRepository,
+            PacienteRepository pacienteRepository,
+            FuncionarioRepository funcionarioRepository,
             PasswordEncoder passwordEncoder,
             TokenService tokenService) {
-        this.usuarioRepository = usuarioRepository;
+        this.pacienteRepository = pacienteRepository;
+        this.funcionarioRepository = funcionarioRepository;
         this.passwordEncoder = passwordEncoder;
         this.tokenService = tokenService;
     }
 
     @Override
-    public AuthTokenOutput autenticar(AutenticarUsuarioCommand command) {
+    public AuthTokenOutput autenticar(AutenticarCommand command) {
         Email email = new Email(command.email());
         Senha senhaRaw = new Senha(command.senha());
 
-        Usuario usuario = usuarioRepository.findByEmail(email)
-                .orElseThrow(() -> new UsuarioNotFoundException("Credenciais inválidas"));
-
-        if (!passwordEncoder.matches(senhaRaw, usuario.getSenha().getValue())) {
-            throw new BadCredentialsException("Credenciais inválidas");
+        // Tentar autenticar como paciente primeiro
+        var pacienteOpt = pacienteRepository.findByEmail(email);
+        if (pacienteOpt.isPresent()) {
+            Paciente paciente = pacienteOpt.get();
+            if (passwordEncoder.matches(senhaRaw, paciente.getSenha().getValue())) {
+                String token = tokenService.generateTokenForPaciente(paciente);
+                return new AuthTokenOutput(token, "Bearer", 86400000L, "PACIENTE");
+            }
         }
 
-        String token = tokenService.generateToken(usuario);
+        // Tentar autenticar como funcionário
+        var funcionarioOpt = funcionarioRepository.findByEmail(email);
+        if (funcionarioOpt.isPresent()) {
+            Funcionario funcionario = funcionarioOpt.get();
+            if (passwordEncoder.matches(senhaRaw, funcionario.getSenha().getValue())) {
+                String token = tokenService.generateTokenForFuncionario(funcionario);
+                return new AuthTokenOutput(token, "Bearer", 86400000L, funcionario.getTipo().name());
+            }
+        }
 
-        return new AuthTokenOutput(
-                token,
-                "Bearer",
-                86400000L // 24 horas em millisegundos
-        );
+        throw new BadCredentialsException("Credenciais inválidas");
     }
 }
