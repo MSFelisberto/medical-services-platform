@@ -7,7 +7,6 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -24,7 +23,29 @@ public class TokenServiceImpl implements TokenService {
     @Value("${jwt.expiration}")
     private long jwtExpirationInMs;
 
+    @Value("${jwt.service.expiration:3600000}") // 1 hora para serviços
+    private long serviceTokenExpiration;
+
     private SecretKey key;
+
+    // Método para gerar token de serviço
+    public String generateServiceToken(String serviceId) {
+        Date now = new Date();
+        Date expirationDate = new Date(now.getTime() + serviceTokenExpiration);
+
+        if (this.key == null) {
+            this.key = Keys.hmacShaKeyFor(jwtSecret.getBytes());
+        }
+
+        return Jwts.builder()
+                .setSubject(serviceId)
+                .claim("userType", "SISTEMA")
+                .claim("roles", List.of("ROLE_SISTEMA"))
+                .setIssuedAt(now)
+                .setExpiration(expirationDate)
+                .signWith(key, SignatureAlgorithm.HS256)
+                .compact();
+    }
 
     @Override
     public String generateTokenForPaciente(Paciente paciente) {
@@ -69,6 +90,7 @@ public class TokenServiceImpl implements TokenService {
                 .compact();
     }
 
+    // Métodos restantes mantidos iguais...
     @Override
     public boolean validateToken(String token) {
         try {
@@ -76,7 +98,6 @@ public class TokenServiceImpl implements TokenService {
             Jwts.parserBuilder().setSigningKey(this.key).build().parseClaimsJws(token);
             return true;
         } catch (Exception e) {
-            LoggerFactory.getLogger(this.getClass()).error("Validação do JWT falhou: ", e);
             return false;
         }
     }
