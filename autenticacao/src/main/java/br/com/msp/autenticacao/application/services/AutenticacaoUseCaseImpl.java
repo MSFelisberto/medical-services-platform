@@ -33,7 +33,6 @@ public class AutenticacaoUseCaseImpl implements AutenticacaoUseCase {
         Email email = new Email(command.email());
         Senha senhaRaw = new Senha(command.senha());
 
-        // Tentar autenticar como paciente primeiro
         var pacienteOpt = pacienteRepository.findByEmail(email);
         if (pacienteOpt.isPresent()) {
             Paciente paciente = pacienteOpt.get();
@@ -43,7 +42,6 @@ public class AutenticacaoUseCaseImpl implements AutenticacaoUseCase {
             }
         }
 
-        // Tentar autenticar como funcionário
         var funcionarioOpt = funcionarioRepository.findByEmail(email);
         if (funcionarioOpt.isPresent()) {
             Funcionario funcionario = funcionarioOpt.get();

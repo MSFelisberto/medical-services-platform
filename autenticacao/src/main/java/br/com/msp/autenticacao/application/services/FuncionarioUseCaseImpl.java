@@ -21,7 +21,6 @@ public class FuncionarioUseCaseImpl implements FuncionarioUseCase {
     public FuncionarioOutput cadastrarFuncionario(CadastrarFuncionarioCommand command) {
         Email email = new Email(command.email());
 
-        // Validar se já existe
         if (funcionarioRepository.existsByEmail(email)) {
             throw new FuncionarioBusinessException("Já existe um funcionário com este e-mail: " + email.getValue());
         }
@@ -30,7 +29,6 @@ public class FuncionarioUseCaseImpl implements FuncionarioUseCase {
             throw new FuncionarioBusinessException("Já existe um funcionário com este CPF");
         }
 
-        // Validações específicas por tipo
         if (command.crm() != null && !command.crm().trim().isEmpty()) {
             if (funcionarioRepository.existsByCrm(command.crm())) {
                 throw new FuncionarioBusinessException("Já existe um médico com este CRM");

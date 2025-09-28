@@ -32,7 +32,7 @@ public class ServiceAuthController {
             AuthResponseDTO response = new AuthResponseDTO(
                     token,
                     "Bearer",
-                    3600000L, // 1 hora
+                    3600000L,
                     "SISTEMA"
             );
 

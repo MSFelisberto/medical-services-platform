@@ -73,13 +73,11 @@ public class FuncionarioRepositoryImpl implements FuncionarioRepository {
         entity.setAtivo(funcionario.isAtivo());
         entity.setDataCadastro(funcionario.getDataCadastro());
 
-        // Especialidade
         if (funcionario.getEspecialidade() != null) {
             entity.setEspecialidadeNome(funcionario.getEspecialidade().getNome());
             entity.setEspecialidadeCodigo(funcionario.getEspecialidade().getCodigo());
         }
 
-        // Senha
         String senhaValue = funcionario.getSenha().getValue();
         if (isPasswordEncoded(senhaValue)) {
             entity.setSenha(senhaValue);

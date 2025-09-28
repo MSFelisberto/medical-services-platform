@@ -46,7 +46,7 @@ public class ServiceAuthenticationFilter extends OncePerRequestFilter {
 
                 if ("SISTEMA".equals(userType)) {
                     List<String> roles = tokenService.getRolesFromToken(jwt);
-                    String serviceId = tokenService.getEmailFromToken(jwt); // Para serviços, usamos o subject como serviceId
+                    String serviceId = tokenService.getEmailFromToken(jwt);
 
                     List<SimpleGrantedAuthority> authorities = roles.stream()
                             .map(SimpleGrantedAuthority::new)

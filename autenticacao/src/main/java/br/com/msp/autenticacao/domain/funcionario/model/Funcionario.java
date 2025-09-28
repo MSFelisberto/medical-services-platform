@@ -13,13 +13,12 @@ public class Funcionario {
     private final TipoFuncionario tipo;
     private final String nomeCompleto;
     private final String cpf;
-    private final String crm; // Apenas para médicos
-    private final String coren; // Apenas para enfermeiros
-    private final Especialidade especialidade; // Apenas para médicos
+    private final String crm;
+    private final String coren;
+    private final Especialidade especialidade;
     private final boolean ativo;
     private final LocalDateTime dataCadastro;
 
-    // Construtor para criação (sem ID)
     public Funcionario(Email email, Senha senha, TipoFuncionario tipo, String nomeCompleto,
                        String cpf, String crm, String coren, Especialidade especialidade) {
         validarDadosObrigatorios(email, senha, tipo, nomeCompleto, cpf);
@@ -38,7 +37,6 @@ public class Funcionario {
         this.dataCadastro = LocalDateTime.now();
     }
 
-    // Construtor para reconstrução (com ID)
     public Funcionario(FuncionarioId id, Email email, Senha senha, TipoFuncionario tipo,
                        String nomeCompleto, String cpf, String crm, String coren,
                        Especialidade especialidade, boolean ativo, LocalDateTime dataCadastro) {
@@ -75,7 +73,6 @@ public class Funcionario {
         if (!this.ativo) {
             throw new FuncionarioBusinessException("Funcionário já está inativo");
         }
-        // Setter seria criado para inativação
     }
 
     private void validarDadosObrigatorios(Email email, Senha senha, TipoFuncionario tipo,
@@ -137,7 +134,6 @@ public class Funcionario {
         }
     }
 
-    // Getters
     public FuncionarioId getId() { return id; }
     public Email getEmail() { return email; }
     public Senha getSenha() { return senha; }

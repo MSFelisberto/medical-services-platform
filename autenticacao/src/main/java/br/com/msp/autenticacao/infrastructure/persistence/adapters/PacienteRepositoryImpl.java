@@ -61,7 +61,6 @@ public class PacienteRepositoryImpl implements PacienteRepository {
         entity.setTelefone(paciente.getTelefone());
         entity.setAtivo(paciente.isAtivo());
 
-        // Endereço
         entity.setLogradouro(paciente.getEndereco().getLogradouro());
         entity.setNumero(paciente.getEndereco().getNumero());
         entity.setComplemento(paciente.getEndereco().getComplemento());
@@ -70,7 +69,6 @@ public class PacienteRepositoryImpl implements PacienteRepository {
         entity.setEstado(paciente.getEndereco().getEstado());
         entity.setCep(paciente.getEndereco().getCep());
 
-        // Senha
         String senhaValue = paciente.getSenha().getValue();
         if (isPasswordEncoded(senhaValue)) {
             entity.setSenha(senhaValue);

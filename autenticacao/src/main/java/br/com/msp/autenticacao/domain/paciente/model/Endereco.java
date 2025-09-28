@@ -46,7 +46,6 @@ public class Endereco {
         }
     }
 
-    // Getters
     public String getLogradouro() { return logradouro; }
     public String getNumero() { return numero; }
     public String getComplemento() { return complemento; }

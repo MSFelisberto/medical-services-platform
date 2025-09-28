@@ -21,7 +21,6 @@ public class PacienteUseCaseImpl implements PacienteUseCase {
     public PacienteOutput cadastrarPaciente(CadastrarPacienteCommand command) {
         Email email = new Email(command.email());
 
-        // Validar se já existe
         if (pacienteRepository.existsByEmail(email)) {
             throw new PacienteBusinessException("Já existe um paciente com este e-mail: " + email.getValue());
         }

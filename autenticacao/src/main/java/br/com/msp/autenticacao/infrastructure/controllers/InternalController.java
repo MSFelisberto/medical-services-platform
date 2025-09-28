@@ -17,7 +17,7 @@ public class InternalController {
     }
 
     @GetMapping("/usuarios/pacientes/{pacienteId}/exists")
-    @PreAuthorize("hasRole('SISTEMA')") // Apenas serviços autenticados
+    @PreAuthorize("hasRole('SISTEMA')")
     public ResponseEntity<Boolean> existePaciente(@PathVariable Long pacienteId) {
         ValidarPacienteQuery query = new ValidarPacienteQuery(pacienteId);
         boolean exists = pacienteUseCase.validarPacienteExiste(query);

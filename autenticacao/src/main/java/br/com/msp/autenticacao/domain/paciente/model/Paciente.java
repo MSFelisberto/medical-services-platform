@@ -17,7 +17,6 @@ public class Paciente {
     private final Endereco endereco;
     private final boolean ativo;
 
-    // Construtor para criação (sem ID)
     public Paciente(Email email, Senha senha, String nomeCompleto, String cpf,
                     LocalDate dataNascimento, String telefone, Endereco endereco) {
         validarDadosObrigatorios(email, senha, nomeCompleto, cpf, dataNascimento, telefone, endereco);
@@ -34,7 +33,6 @@ public class Paciente {
         this.ativo = true;
     }
 
-    // Construtor para reconstrução (com ID)
     public Paciente(PacienteId id, Email email, Senha senha, String nomeCompleto, String cpf,
                     LocalDate dataNascimento, String telefone, Endereco endereco, boolean ativo) {
         this.id = id;
@@ -56,7 +54,6 @@ public class Paciente {
         if (!this.ativo) {
             throw new PacienteBusinessException("Paciente já está inativo");
         }
-        // Setter seria criado para inativação
     }
 
     public int calcularIdade() {
@@ -95,10 +92,8 @@ public class Paciente {
         if (cpfLimpo.length() != 11) {
             throw new PacienteBusinessException("CPF deve ter 11 dígitos");
         }
-        // Implementar validação de CPF completa se necessário
     }
 
-    // Getters
     public PacienteId getId() { return id; }
     public Email getEmail() { return email; }
     public Senha getSenha() { return senha; }

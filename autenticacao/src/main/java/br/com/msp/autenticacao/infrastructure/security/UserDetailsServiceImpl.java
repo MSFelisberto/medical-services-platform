@@ -32,22 +32,19 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     public UserDetails loadUserByUsername(String emailOrServiceId) throws UsernameNotFoundException {
         log.debug("Tentando carregar usuário: {}", emailOrServiceId);
 
-        // Verificar se é um serviceId (para serviços do sistema)
         if (emailOrServiceId.endsWith("-service")) {
             log.debug("Identificado como serviceId: {}", emailOrServiceId);
             return new CustomUserDetails(
-                    0L, // ID fictício para serviços
+                    0L,
                     emailOrServiceId,
-                    "N/A", // Senha não aplicável para serviços
+                    "N/A",
                     Collections.singletonList(new SimpleGrantedAuthority("ROLE_SISTEMA"))
             );
         }
 
-        // Tentar encontrar como email
         try {
             Email emailVO = new Email(emailOrServiceId);
 
-            // Tentar encontrar paciente primeiro
             Optional<Paciente> pacienteOpt = pacienteRepository.findByEmail(emailVO);
             if (pacienteOpt.isPresent()) {
                 Paciente paciente = pacienteOpt.get();
@@ -60,7 +57,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                 );
             }
 
-            // Tentar encontrar funcionário
             Optional<Funcionario> funcionarioOpt = funcionarioRepository.findByEmail(emailVO);
             if (funcionarioOpt.isPresent()) {
                 Funcionario funcionario = funcionarioOpt.get();
