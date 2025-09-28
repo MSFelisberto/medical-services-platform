@@ -15,7 +15,6 @@ services:
       retries: 5
       start_period: 10s
 
-
   postgres:
     image: postgres:13
     container_name: postgres
@@ -74,6 +73,9 @@ services:
         condition: service_healthy
     environment:
       - SPRING_PROFILES_ACTIVE=docker
+      - AGENDAMENTO_SECRET=${AGENDAMENTO_SECRET}
+      - HISTORICO_SECRET=${HISTORICO_SECRET}
+      - NOTIFICACOES_SECRET=${NOTIFICACOES_SECRET}
     networks:
       - msp-network
 
@@ -91,6 +93,7 @@ services:
         condition: service_started
     environment:
       - SPRING_PROFILES_ACTIVE=docker
+      - AGENDAMENTO_SECRET=${AGENDAMENTO_SECRET}
     networks:
       - msp-network
 
@@ -108,6 +111,7 @@ services:
         condition: service_started
     environment:
       - SPRING_PROFILES_ACTIVE=docker
+      - HISTORICO_SECRET=${HISTORICO_SECRET}
     networks:
       - msp-network
 
@@ -123,6 +127,7 @@ services:
         condition: service_started
     environment:
       - SPRING_PROFILES_ACTIVE=docker
+      - NOTIFICACOES_SECRET=${NOTIFICACOES_SECRET}
     networks:
       - msp-network
 

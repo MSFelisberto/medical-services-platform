@@ -1,67 +1,72 @@
 package br.com.msp.autenticacao.infrastructure.security;
 
-import br.com.msp.autenticacao.application.ports.outbound.TokenService;
+import br.com.msp.autenticacao.infrastructure.security.adapters.TokenServiceImpl;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.List;
 
+@Slf4j
 @Component
-public class JwtAuthenticationFilter extends OncePerRequestFilter {
+public class ServiceAuthenticationFilter extends OncePerRequestFilter {
 
-    private final TokenService tokenService;
-    private final UserDetailsService userDetailsService;
+    private final TokenServiceImpl tokenService;
 
-    public JwtAuthenticationFilter(TokenService tokenService, UserDetailsService userDetailsService) {
+    public ServiceAuthenticationFilter(TokenServiceImpl tokenService) {
         this.tokenService = tokenService;
-        this.userDetailsService = userDetailsService;
     }
 
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request,
                                     @NonNull HttpServletResponse response,
                                     @NonNull FilterChain filterChain) throws ServletException, IOException {
+
+        if (!request.getRequestURI().startsWith("/internal/")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         try {
             String jwt = getJwtFromRequest(request);
+            log.debug("Processando token de serviço para endpoint interno: {}", request.getRequestURI());
 
             if (StringUtils.hasText(jwt) && tokenService.validateToken(jwt)) {
-                String userEmail = tokenService.getEmailFromToken(jwt);
+                String userType = tokenService.getUserTypeFromToken(jwt);
 
-                if (StringUtils.hasText(userEmail)) {
-                    UserDetails userDetails = userDetailsService.loadUserByUsername(userEmail);
-                    UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                            userDetails, null, userDetails.getAuthorities()
-                    );
+                if ("SISTEMA".equals(userType)) {
+                    List<String> roles = tokenService.getRolesFromToken(jwt);
+                    String serviceId = tokenService.getEmailFromToken(jwt); // Para serviços, usamos o subject como serviceId
 
-                    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    List<SimpleGrantedAuthority> authorities = roles.stream()
+                            .map(SimpleGrantedAuthority::new)
+                            .toList();
+
+                    UsernamePasswordAuthenticationToken authentication =
+                            new UsernamePasswordAuthenticationToken(serviceId, null, authorities);
+
                     SecurityContextHolder.getContext().setAuthentication(authentication);
+                    log.debug("Serviço autenticado: {}", serviceId);
                 }
+            } else {
+                log.warn("Token inválido ou ausente para endpoint interno: {}", request.getRequestURI());
             }
         } catch (Exception e) {
-            logger.error("Não foi possível definir a autenticação do usuário no contexto de segurança", e);
+            log.error("Erro ao processar token de serviço: {}", e.getMessage());
             SecurityContextHolder.clearContext();
         }
 
         filterChain.doFilter(request, response);
-    }
-
-    @Override
-    protected boolean shouldNotFilter(@NonNull HttpServletRequest request) throws ServletException {
-        String path = request.getRequestURI();
-        return path.contains("/auth/login") ||
-                path.contains("/auth/service/") ||
-                path.contains("/internal/");
     }
 
     private String getJwtFromRequest(HttpServletRequest request) {

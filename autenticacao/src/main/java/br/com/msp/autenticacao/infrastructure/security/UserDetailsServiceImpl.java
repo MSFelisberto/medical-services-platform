@@ -5,6 +5,7 @@ import br.com.msp.autenticacao.application.ports.outbound.PacienteRepository;
 import br.com.msp.autenticacao.domain.funcionario.model.Funcionario;
 import br.com.msp.autenticacao.domain.paciente.model.Paciente;
 import br.com.msp.autenticacao.domain.shared.model.Email;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.util.Collections;
 import java.util.Optional;
 
+@Slf4j
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
 
@@ -27,33 +29,54 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        Email emailVO = new Email(email);
+    public UserDetails loadUserByUsername(String emailOrServiceId) throws UsernameNotFoundException {
+        log.debug("Tentando carregar usuário: {}", emailOrServiceId);
 
-        // Tentar encontrar paciente primeiro
-        Optional<Paciente> pacienteOpt = pacienteRepository.findByEmail(emailVO);
-        if (pacienteOpt.isPresent()) {
-            Paciente paciente = pacienteOpt.get();
+        // Verificar se é um serviceId (para serviços do sistema)
+        if (emailOrServiceId.endsWith("-service")) {
+            log.debug("Identificado como serviceId: {}", emailOrServiceId);
             return new CustomUserDetails(
-                    paciente.getId().getValue(),
-                    paciente.getEmail().getValue(),
-                    paciente.getSenha().getValue(),
-                    Collections.singletonList(new SimpleGrantedAuthority("ROLE_PACIENTE"))
+                    0L, // ID fictício para serviços
+                    emailOrServiceId,
+                    "N/A", // Senha não aplicável para serviços
+                    Collections.singletonList(new SimpleGrantedAuthority("ROLE_SISTEMA"))
             );
         }
 
-        // Tentar encontrar funcionário
-        Optional<Funcionario> funcionarioOpt = funcionarioRepository.findByEmail(emailVO);
-        if (funcionarioOpt.isPresent()) {
-            Funcionario funcionario = funcionarioOpt.get();
-            return new CustomUserDetails(
-                    funcionario.getId().getValue(),
-                    funcionario.getEmail().getValue(),
-                    funcionario.getSenha().getValue(),
-                    Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + funcionario.getTipo().name()))
-            );
+        // Tentar encontrar como email
+        try {
+            Email emailVO = new Email(emailOrServiceId);
+
+            // Tentar encontrar paciente primeiro
+            Optional<Paciente> pacienteOpt = pacienteRepository.findByEmail(emailVO);
+            if (pacienteOpt.isPresent()) {
+                Paciente paciente = pacienteOpt.get();
+                log.debug("Paciente encontrado: {}", paciente.getId().getValue());
+                return new CustomUserDetails(
+                        paciente.getId().getValue(),
+                        paciente.getEmail().getValue(),
+                        paciente.getSenha().getValue(),
+                        Collections.singletonList(new SimpleGrantedAuthority("ROLE_PACIENTE"))
+                );
+            }
+
+            // Tentar encontrar funcionário
+            Optional<Funcionario> funcionarioOpt = funcionarioRepository.findByEmail(emailVO);
+            if (funcionarioOpt.isPresent()) {
+                Funcionario funcionario = funcionarioOpt.get();
+                log.debug("Funcionário encontrado: {} - Tipo: {}", funcionario.getId().getValue(), funcionario.getTipo());
+                return new CustomUserDetails(
+                        funcionario.getId().getValue(),
+                        funcionario.getEmail().getValue(),
+                        funcionario.getSenha().getValue(),
+                        Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + funcionario.getTipo().name()))
+                );
+            }
+        } catch (Exception e) {
+            log.error("Erro ao processar email: {}", e.getMessage());
         }
 
-        throw new UsernameNotFoundException("Usuário não encontrado com o e-mail: " + email);
+        log.warn("Usuário não encontrado: {}", emailOrServiceId);
+        throw new UsernameNotFoundException("Usuário não encontrado: " + emailOrServiceId);
     }
 }
