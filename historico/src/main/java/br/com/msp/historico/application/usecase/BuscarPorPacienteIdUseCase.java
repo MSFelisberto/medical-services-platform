@@ -20,11 +20,10 @@ public class BuscarPorPacienteIdUseCase {
         return dominios.stream()
                 .map(h -> new HistoricoDTO(
                         h.getId(),
+                        h.getPacienteId(),
+                        h.getMedicoId(),
                         h.getDataRealizacao(),
-                        h.getEspecialidade(),
-                        h.getDiagnostico(),
-                        h.getPrescricao(),
-                        h.getObservacoes()))
+                        h.getEspecialidade()))
                 .collect(Collectors.toList());
     }
 }

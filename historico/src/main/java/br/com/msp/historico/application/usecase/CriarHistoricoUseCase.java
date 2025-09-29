@@ -13,6 +13,8 @@ public class CriarHistoricoUseCase {
 
     public void executar(CriarHistoricoCommand command) {
         Historico historico = new Historico();
+        historico.setDataRealizacao(command.dataRealizacao());
+        historico.setEspecialidade(command.especialidade());
         historico.setPacienteId(command.pacienteId());
         historico.setMedicoId(command.medicoId());
 

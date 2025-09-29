@@ -15,8 +15,8 @@ public class HistoricoEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private Long idConsultaAgendada;
+//    @Column(nullable = false)
+//    private Long idConsultaAgendada;
 
     @Column(nullable = false)
     private Long pacienteId;
@@ -25,8 +25,4 @@ public class HistoricoEntity {
     private Long medicoId;
     private LocalDateTime dataRealizacao;
     private String especialidade;
-    private String diagnostico;
-    private String prescricao;
-    private String observacoes;
-
 }

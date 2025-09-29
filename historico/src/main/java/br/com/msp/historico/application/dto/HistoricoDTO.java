@@ -4,9 +4,8 @@ import java.time.LocalDateTime;
 
 public record HistoricoDTO(
     Long id,
+    Long pacienteId,
+    Long medicoId,
     LocalDateTime dataRealizacao,
-    String especialidade,
-    String diagnostico,
-    String prescricao,
-    String observacoes
+    String especialidade
 ) {}
