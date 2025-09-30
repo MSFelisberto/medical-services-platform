@@ -4,7 +4,10 @@ type Query {
 }
 
 type HistoricoConsulta {
-    id: ID!
+    id: ID
+    idConsultaAgendada: ID
+    pacienteId: ID
+    medicoId: ID
     dataRealizacao: String
     especialidade: String
 }

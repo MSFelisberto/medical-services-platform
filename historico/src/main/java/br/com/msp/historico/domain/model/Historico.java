@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 
 public class Historico {
     private Long id;
+    private Long idConsultaAgendada;
     private Long pacienteId;
     private Long medicoId;
     private LocalDateTime dataRealizacao;
@@ -15,6 +16,14 @@ public class Historico {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Long getIdConsultaAgendada() {
+        return idConsultaAgendada;
+    }
+
+    public void setIdConsultaAgendada(Long idConsultaAgendada) {
+        this.idConsultaAgendada = idConsultaAgendada;
     }
 
     public String getEspecialidade() {

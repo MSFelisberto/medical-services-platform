@@ -8,6 +8,9 @@ import java.time.LocalDateTime;
 
 public record ConsultaDTO(
         @NotNull
+        Long id,
+
+        @NotNull
         Long pacienteId,
 
         @NotNull

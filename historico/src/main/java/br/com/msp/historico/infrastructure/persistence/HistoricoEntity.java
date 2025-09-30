@@ -15,14 +15,16 @@ public class HistoricoEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-//    @Column(nullable = false)
-//    private Long idConsultaAgendada;
+    @Column(name = "id_consulta_agendada", nullable = false)
+    private Long idConsultaAgendada;
 
-    @Column(nullable = false)
+    @Column(name = "paciente_id", nullable = false)
     private Long pacienteId;
 
-    @Column(nullable = false)
+    @Column(name = "medico_id", nullable = false)
     private Long medicoId;
+
     private LocalDateTime dataRealizacao;
+
     private String especialidade;
 }

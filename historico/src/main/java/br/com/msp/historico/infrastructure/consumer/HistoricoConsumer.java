@@ -21,6 +21,7 @@ public class HistoricoConsumer {
     public void consumeAgendar(ConsultaDTO consultaDTO) {
         log.info("[AGENDAR] Mensagem recebida: {}", consultaDTO);
         this.historicoUseCase.criar(new CriarHistoricoCommand(
+                consultaDTO.id(),
                 consultaDTO.pacienteId(),
                 consultaDTO.medicoId(),
                 consultaDTO.dataHora(),
@@ -32,6 +33,7 @@ public class HistoricoConsumer {
     public void consumeCancelar(ConsultaDTO consultaDTO) {
         log.info("[CANCELAR] Mensagem recebida: {}", consultaDTO);
         this.historicoUseCase.criar(new CriarHistoricoCommand(
+                consultaDTO.id(),
                 consultaDTO.pacienteId(),
                 consultaDTO.medicoId(),
                 consultaDTO.dataHora(),
@@ -43,6 +45,7 @@ public class HistoricoConsumer {
     public void consumeReagendar(ConsultaDTO consultaDTO) {
         log.info("[REAGENDAR] Mensagem recebida: {}", consultaDTO);
         this.historicoUseCase.criar(new CriarHistoricoCommand(
+                consultaDTO.id(),
                 consultaDTO.pacienteId(),
                 consultaDTO.medicoId(),
                 consultaDTO.dataHora(),

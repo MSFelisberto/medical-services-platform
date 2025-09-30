@@ -8,6 +8,7 @@ public class HistoricoMapper {
     public static HistoricoEntity toModel(Historico domain) {
         HistoricoEntity model = new HistoricoEntity();
         model.setId(domain.getId());
+        model.setIdConsultaAgendada(domain.getIdConsultaAgendada());
         model.setDataRealizacao(domain.getDataRealizacao());
         model.setEspecialidade(domain.getEspecialidade());
         model.setMedicoId(domain.getMedicoId());
@@ -18,6 +19,7 @@ public class HistoricoMapper {
     public static Historico toDomain(HistoricoEntity model) {
         Historico domain = new Historico();
         domain.setId(model.getId());
+        domain.setIdConsultaAgendada(model.getIdConsultaAgendada());
         domain.setDataRealizacao(model.getDataRealizacao());
         domain.setEspecialidade(model.getEspecialidade());
         domain.setMedicoId(model.getMedicoId());

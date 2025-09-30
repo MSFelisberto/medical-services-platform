@@ -56,6 +56,7 @@ public class NotificationServiceImpl implements NotificationService {
 
     private ConsultaDTO toDTO(Consulta consulta) {
         return new ConsultaDTO(
+                consulta.getId().getValue(),
                 consulta.getPacienteId().getValue(),
                 consulta.getMedicoId().getValue(),
                 consulta.getDataHora(),

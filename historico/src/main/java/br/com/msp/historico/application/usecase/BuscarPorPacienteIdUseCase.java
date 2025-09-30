@@ -20,6 +20,7 @@ public class BuscarPorPacienteIdUseCase {
         return dominios.stream()
                 .map(h -> new HistoricoDTO(
                         h.getId(),
+                        h.getIdConsultaAgendada(),
                         h.getPacienteId(),
                         h.getMedicoId(),
                         h.getDataRealizacao(),

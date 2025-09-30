@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 
 public record HistoricoDTO(
     Long id,
+    Long idConsultaAgendada,
     Long pacienteId,
     Long medicoId,
     LocalDateTime dataRealizacao,
