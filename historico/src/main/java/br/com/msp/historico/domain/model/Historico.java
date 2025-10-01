@@ -9,6 +9,7 @@ public class Historico {
     private Long medicoId;
     private LocalDateTime dataRealizacao;
     private String especialidade;
+    private String status;
 
     public Long getId() {
         return id;
@@ -57,4 +58,8 @@ public class Historico {
     public void setPacienteId(Long pacienteId) {
         this.pacienteId = pacienteId;
     }
+
+    public String getStatus() { return status; }
+
+    public void setStatus(String status) { this.status = status; }
 }

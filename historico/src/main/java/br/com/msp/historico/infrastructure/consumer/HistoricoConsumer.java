@@ -17,7 +17,7 @@ public class HistoricoConsumer {
         this.historicoUseCase = historicoUseCase;
     }
 
-    @RabbitListener(queues = RabbitConfig.QUEUE_AGENDAR)
+    @RabbitListener(queues = RabbitConfig.QUEUE_HISTORICO_AGENDAR)
     public void consumeAgendar(ConsultaDTO consultaDTO) {
         log.info("[AGENDAR] Mensagem recebida: {}", consultaDTO);
         this.historicoUseCase.criar(new CriarHistoricoCommand(
@@ -25,11 +25,12 @@ public class HistoricoConsumer {
                 consultaDTO.pacienteId(),
                 consultaDTO.medicoId(),
                 consultaDTO.dataHora(),
-                consultaDTO.especialidade()
+                consultaDTO.especialidade(),
+                consultaDTO.status()
         ));
     }
 
-    @RabbitListener(queues = RabbitConfig.QUEUE_CANCELAR)
+    @RabbitListener(queues = RabbitConfig.QUEUE_HISTORICO_CANCELAR)
     public void consumeCancelar(ConsultaDTO consultaDTO) {
         log.info("[CANCELAR] Mensagem recebida: {}", consultaDTO);
         this.historicoUseCase.criar(new CriarHistoricoCommand(
@@ -37,11 +38,12 @@ public class HistoricoConsumer {
                 consultaDTO.pacienteId(),
                 consultaDTO.medicoId(),
                 consultaDTO.dataHora(),
-                consultaDTO.especialidade()
+                consultaDTO.especialidade(),
+                consultaDTO.status()
         ));
     }
 
-    @RabbitListener(queues = RabbitConfig.QUEUE_REAGENDAR)
+    @RabbitListener(queues = RabbitConfig.QUEUE_HISTORICO_REAGENDAR)
     public void consumeReagendar(ConsultaDTO consultaDTO) {
         log.info("[REAGENDAR] Mensagem recebida: {}", consultaDTO);
         this.historicoUseCase.criar(new CriarHistoricoCommand(
@@ -49,7 +51,8 @@ public class HistoricoConsumer {
                 consultaDTO.pacienteId(),
                 consultaDTO.medicoId(),
                 consultaDTO.dataHora(),
-                consultaDTO.especialidade()
+                consultaDTO.especialidade(),
+                consultaDTO.status()
         ));
     }
 }

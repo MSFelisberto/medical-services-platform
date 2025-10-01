@@ -1,6 +1,9 @@
 type Query {
     historicoPorPaciente(pacienteId: ID!): [HistoricoConsulta]
     historicoPorId(id: ID!): HistoricoConsulta
+    historicoPorIdConsultaAgendada(idConsultaAgendada: ID!): [HistoricoConsulta]
+    historicoPorStatus(status: String!): [HistoricoConsulta]
+    historicoPorEspecialidade(especialidade: String!): [HistoricoConsulta]
 }
 
 type HistoricoConsulta {
@@ -10,4 +13,5 @@ type HistoricoConsulta {
     medicoId: ID
     dataRealizacao: String
     especialidade: String
+    status: String
 }

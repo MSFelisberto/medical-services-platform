@@ -8,5 +8,6 @@ public record HistoricoDTO(
     Long pacienteId,
     Long medicoId,
     LocalDateTime dataRealizacao,
-    String especialidade
+    String especialidade,
+    String status
 ) {}

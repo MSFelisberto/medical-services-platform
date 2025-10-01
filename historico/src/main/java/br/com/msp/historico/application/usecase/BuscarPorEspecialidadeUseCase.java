@@ -7,15 +7,15 @@ import br.com.msp.historico.domain.model.Historico;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class BuscarPorPacienteIdUseCase {
+public class BuscarPorEspecialidadeUseCase {
     private final HistoricoGateway historicoGateway;
 
-    public BuscarPorPacienteIdUseCase(HistoricoGateway historicoGateway) {
+    public BuscarPorEspecialidadeUseCase(HistoricoGateway historicoGateway) {
         this.historicoGateway = historicoGateway;
     }
 
-    public List<HistoricoDTO> executar(Long pacienteId) {
-        List<Historico> dominios = historicoGateway.buscarPorPacienteId(pacienteId);
+    public List<HistoricoDTO> executar(String especialidade) {
+        List<Historico> dominios = historicoGateway.buscarPorEspecialidade(especialidade);
 
         return dominios.stream()
                 .map(h -> new HistoricoDTO(

@@ -27,6 +27,27 @@ public class HistoricoGatewayImpl implements HistoricoGateway {
     }
 
     @Override
+    public List<Historico> buscarPorConsultaAgendada(Long consultaId) {
+        return repository.findAllByIdConsultaAgendada(consultaId).stream()
+                .map(HistoricoMapper::toDomain)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Historico> buscarPorEspecialidade(String especialidade) {
+        return repository.findAllByEspecialidade(especialidade).stream()
+                .map(HistoricoMapper::toDomain)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Historico> buscarPorStatus(String status) {
+        return repository.findAllByStatus(status).stream()
+                .map(HistoricoMapper::toDomain)
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public Historico criarHistorico(Historico historico) {
         HistoricoEntity entity = HistoricoMapper.toModel(historico);
         HistoricoEntity savedEntity = repository.save(entity);

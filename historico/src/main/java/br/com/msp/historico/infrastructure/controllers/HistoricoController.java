@@ -20,4 +20,19 @@ public class HistoricoController {
     public List<HistoricoDTO> historicoPorPaciente(@Argument Long pacienteId) {
         return historicoUseCase.buscarPorPacienteId(pacienteId);
     }
+
+    @QueryMapping
+    public List<HistoricoDTO> historicoPorIdConsultaAgendada(@Argument Long idConsultaAgendada) {
+        return historicoUseCase.buscarPorIdConsultaAgendada(idConsultaAgendada);
+    }
+
+    @QueryMapping
+    public List<HistoricoDTO> historicoPorStatus(@Argument String status) {
+        return historicoUseCase.buscarPorStatus(status);
+    }
+
+    @QueryMapping
+    public List<HistoricoDTO> historicoPorEspecialidade(@Argument String especialidade) {
+        return historicoUseCase.buscarPorEspecialidade(especialidade);
+    }
 }

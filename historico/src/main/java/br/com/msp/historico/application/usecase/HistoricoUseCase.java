@@ -8,4 +8,7 @@ import java.util.List;
 public interface HistoricoUseCase {
     void criar(CriarHistoricoCommand command);
     List<HistoricoDTO> buscarPorPacienteId(Long pacienteId);
+    List<HistoricoDTO> buscarPorIdConsultaAgendada(Long idConsultaAgendada);
+    List<HistoricoDTO> buscarPorStatus(String status);
+    List<HistoricoDTO> buscarPorEspecialidade(String especialidade);
 }

@@ -60,7 +60,8 @@ public class NotificationServiceImpl implements NotificationService {
                 consulta.getPacienteId().getValue(),
                 consulta.getMedicoId().getValue(),
                 consulta.getDataHora(),
-                consulta.getEspecialidade().getValue()
+                consulta.getEspecialidade().getValue(),
+                consulta.getStatus().name()
         );
     }
 }

@@ -7,4 +7,7 @@ import java.util.List;
 
 public interface HistoricoJPARepository extends JpaRepository<HistoricoEntity, Long> {
     List<HistoricoEntity> findAllByPacienteId(Long id);
+    List<HistoricoEntity> findAllByIdConsultaAgendada(Long id);
+    List<HistoricoEntity> findAllByEspecialidade(String especialidade);
+    List<HistoricoEntity> findAllByStatus(String status);
 }

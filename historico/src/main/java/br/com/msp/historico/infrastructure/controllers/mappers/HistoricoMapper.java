@@ -13,6 +13,7 @@ public class HistoricoMapper {
         model.setEspecialidade(domain.getEspecialidade());
         model.setMedicoId(domain.getMedicoId());
         model.setPacienteId(domain.getPacienteId());
+        model.setStatus(domain.getStatus());
         return model;
     }
 
@@ -24,6 +25,7 @@ public class HistoricoMapper {
         domain.setEspecialidade(model.getEspecialidade());
         domain.setMedicoId(model.getMedicoId());
         domain.setPacienteId(model.getPacienteId());
+        domain.setStatus(model.getStatus());
         return domain;
     }
 }

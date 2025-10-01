@@ -21,7 +21,10 @@ public record ConsultaDTO(
         LocalDateTime dataHora,
 
         @NotBlank
-        String especialidade
+        String especialidade,
+
+        @NotBlank
+        String status
 ) {
 }
 

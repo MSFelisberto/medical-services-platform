@@ -27,4 +27,6 @@ public class HistoricoEntity {
     private LocalDateTime dataRealizacao;
 
     private String especialidade;
+
+    private String status;
 }

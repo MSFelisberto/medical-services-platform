@@ -18,6 +18,7 @@ public class CriarHistoricoUseCase {
         historico.setEspecialidade(command.especialidade());
         historico.setPacienteId(command.pacienteId());
         historico.setMedicoId(command.medicoId());
+        historico.setStatus(command.status());
 
         historicoGateway.criarHistorico(historico);
     }
