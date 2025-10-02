@@ -5,6 +5,7 @@ import br.com.msp.historico.application.ports.inbound.HistoricoUseCase;
 import br.com.msp.historico.application.ports.outbound.HistoricoRepository;
 import br.com.msp.historico.domain.exception.*;
 import br.com.msp.historico.domain.model.*;
+import br.com.msp.historico.domain.services.HistoricoAuthorizationService;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -12,14 +13,17 @@ import java.util.stream.Collectors;
 public class HistoricoUseCaseImpl implements HistoricoUseCase {
 
     private final HistoricoRepository historicoRepository;
+    private final HistoricoAuthorizationService authorizationService;
 
-    public HistoricoUseCaseImpl(HistoricoRepository historicoRepository) {
+    public HistoricoUseCaseImpl(
+            HistoricoRepository historicoRepository,
+            HistoricoAuthorizationService authorizationService) {
         this.historicoRepository = historicoRepository;
+        this.authorizationService = authorizationService;
     }
 
     @Override
     public HistoricoOutput registrarHistorico(RegistrarHistoricoCommand command) {
-        // Verifica se já existe histórico para esta consulta
         if (historicoRepository.existsByConsultaId(new ConsultaId(command.consultaId()))) {
             throw new HistoricoBusinessException(
                     "Já existe histórico para a consulta ID: " + command.consultaId()
@@ -71,15 +75,11 @@ public class HistoricoUseCaseImpl implements HistoricoUseCase {
     public List<HistoricoOutput> listarHistoricoPorPaciente(ListarHistoricoQuery query) {
         PacienteId pacienteId = new PacienteId(query.pacienteId());
 
-        // Verifica permissões: paciente só pode ver seu próprio histórico
-        if (query.currentUser().hasRole("PACIENTE")) {
-            PacienteId currentUserId = new PacienteId(query.currentUser().getId());
-            if (!pacienteId.equals(currentUserId)) {
-                throw new AuthorizationException(
-                        "Acesso negado. Paciente só pode visualizar o próprio histórico."
-                );
-            }
-        }
+        authorizationService.validarAcessoHistoricoPaciente(
+                pacienteId,
+                query.currentUser().getId(),
+                query.currentUser().getPrimaryRole()
+        );
 
         return historicoRepository.findByPacienteId(pacienteId)
                 .stream()

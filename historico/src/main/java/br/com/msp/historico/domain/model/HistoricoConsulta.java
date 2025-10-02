@@ -8,9 +8,9 @@ public class HistoricoConsulta {
     private HistoricoId id;
     private final ConsultaId consultaId;
     private final PacienteId pacienteId;
-    private final MedicoId medicoId;
-    private final LocalDateTime dataHora;
-    private final String especialidade;
+    private MedicoId medicoId;
+    private  LocalDateTime dataHora;
+    private  String especialidade;
     private StatusHistorico status;
     private String observacoes;
     private final LocalDateTime dataCriacao;
@@ -71,15 +71,19 @@ public class HistoricoConsulta {
         this.dataAtualizacao = LocalDateTime.now();
     }
 
-    public void reagendar(LocalDateTime novaDataHora, MedicoId novoMedico, String novaEspecialidade) {
+    public void reagendar(LocalDateTime novaDataHora, MedicoId novoMedico,
+                          String novaEspecialidade) {
         if (this.status == StatusHistorico.CANCELADA) {
-            throw new HistoricoBusinessException("Não é possível reagendar uma consulta cancelada");
+            throw new HistoricoBusinessException("Não é possível reagendar");
         }
 
-        if (this.status == StatusHistorico.REALIZADA) {
-            throw new HistoricoBusinessException("Não é possível reagendar uma consulta já realizada");
+        if (novaDataHora == null) {
+            throw new HistoricoBusinessException("Nova data é obrigatória");
         }
 
+        this.dataHora = novaDataHora;
+        this.medicoId = novoMedico;
+        this.especialidade = novaEspecialidade;
         this.dataAtualizacao = LocalDateTime.now();
     }
 
@@ -140,8 +144,12 @@ public class HistoricoConsulta {
     public LocalDateTime getDataCriacao() { return dataCriacao; }
     public LocalDateTime getDataAtualizacao() { return dataAtualizacao; }
 
-    public void setId(HistoricoId id) { this.id = id; }
-
+    void assignId(HistoricoId id) {
+        if (this.id != null) {
+            throw new IllegalStateException("ID já foi atribuído");
+        }
+        this.id = id;
+    }
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

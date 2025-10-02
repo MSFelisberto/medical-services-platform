@@ -14,10 +14,25 @@ public class AuthenticatedUser {
         this.roles = Set.copyOf(roles);
     }
 
-    public Long getId() { return id; }
-    public String getUserEmail() { return userEmail; }
+    public Long getId() {
+        return id;
+    }
+
+    public String getUserEmail() {
+        return userEmail;
+    }
 
     public boolean hasRole(String role) {
         return roles.contains("ROLE_" + role);
+    }
+
+    public String getPrimaryRole() {
+        return roles.stream()
+                .findFirst()
+                .orElse("ROLE_UNKNOWN");
+    }
+
+    public Set<String> getRoles() {
+        return Set.copyOf(roles);
     }
 }

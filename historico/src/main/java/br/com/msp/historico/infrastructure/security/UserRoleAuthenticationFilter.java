@@ -4,6 +4,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.NonNull;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -15,30 +16,47 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 public class UserRoleAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request,
                                     @NonNull HttpServletResponse response,
                                     @NonNull FilterChain filterChain) throws ServletException, IOException {
+
+        String userIdStr = request.getHeader("X-User-ID");
         String userEmail = request.getHeader("X-User-Email");
         String userRoles = request.getHeader("X-User-Roles");
 
-        if (userEmail != null && userRoles != null && !userRoles.isEmpty()) {
+        log.debug("Headers recebidos - ID: {}, Email: {}, Roles: {}", userIdStr, userEmail, userRoles);
+
+        if (userIdStr != null && userEmail != null && userRoles != null && !userRoles.isEmpty()) {
             try {
+                Long userId = Long.parseLong(userIdStr);
+
                 List<GrantedAuthority> authorities = Arrays.stream(userRoles.split(","))
+                        .map(String::trim)
                         .map(SimpleGrantedAuthority::new)
                         .collect(Collectors.toList());
 
-                JwtAuthenticationToken auth = new JwtAuthenticationToken(userEmail, null, authorities);
+                UserPrincipal principal = new UserPrincipal(userId, userEmail, authorities);
+                JwtAuthenticationToken auth = new JwtAuthenticationToken(principal, null, authorities);
+
                 SecurityContextHolder.getContext().setAuthentication(auth);
 
+                log.debug("Usuário autenticado com sucesso - ID: {}, Email: {}, Authorities: {}",
+                        userId, userEmail, authorities);
+
+            } catch (NumberFormatException e) {
+                log.error("Erro ao converter X-User-ID para Long: {}", userIdStr, e);
+                SecurityContextHolder.clearContext();
             } catch (Exception e) {
-                logger.error("UserRoleAuthenticationFilter: Não conseguiu verificar o authorities do token", e);
+                log.error("Erro ao processar autenticação: {}", e.getMessage(), e);
                 SecurityContextHolder.clearContext();
             }
         } else {
-            logger.warn("UserRoleAuthenticationFilter: Não conseguiu resgatar o Role e o Email do usuario. Limpando contexto.");
+            log.warn("Headers de autenticação ausentes ou incompletos. ID: {}, Email: {}, Roles: {}",
+                    userIdStr, userEmail, userRoles);
             SecurityContextHolder.clearContext();
         }
 
