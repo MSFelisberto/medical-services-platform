@@ -30,13 +30,4 @@ public class PacienteController {
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
-
-    @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'MEDICO', 'ENFERMEIRO')")
-    public ResponseEntity<PacienteResponseDTO> buscarPorId(@PathVariable Long id) {
-        PacienteOutput output = pacienteUseCase.buscarPorId(id);
-        PacienteResponseDTO response = PacienteResponseDTO.fromOutput(output);
-
-        return ResponseEntity.ok(response);
-    }
 }
