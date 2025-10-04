@@ -4,6 +4,7 @@ import br.com.msp.agendamento.application.ports.outbound.NotificationService;
 import br.com.msp.agendamento.domain.model.Consulta;
 import br.com.msp.commons.config.RabbitConfig;
 import br.com.msp.commons.dtos.ConsultaDTO;
+import br.com.msp.commons.dtos.HistoricoEventDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Component;
@@ -28,6 +29,15 @@ public class NotificationServiceImpl implements NotificationService {
         );
         log.info("Notificação de agendamento enviada para consulta ID: {}",
                 consulta.getId().getValue());
+
+        HistoricoEventDTO historicoEvent = toHistoricoEventDTO(consulta, "AGENDADA");
+        rabbitTemplate.convertAndSend(
+                RabbitConfig.EXCHANGE_NAME,
+                RabbitConfig.ROUTING_KEY_HISTORICO,
+                historicoEvent
+        );
+        log.info("Evento de histórico (AGENDADA) enviado para consulta ID: {}",
+                consulta.getId().getValue());
     }
 
     @Override
@@ -39,6 +49,15 @@ public class NotificationServiceImpl implements NotificationService {
                 dto
         );
         log.info("Notificação de cancelamento enviada para consulta ID: {}",
+                consulta.getId().getValue());
+
+        HistoricoEventDTO historicoEvent = toHistoricoEventDTO(consulta, "CANCELADA");
+        rabbitTemplate.convertAndSend(
+                RabbitConfig.EXCHANGE_NAME,
+                RabbitConfig.ROUTING_KEY_HISTORICO,
+                historicoEvent
+        );
+        log.info("Evento de histórico (CANCELADA) enviado para consulta ID: {}",
                 consulta.getId().getValue());
     }
 
@@ -52,6 +71,15 @@ public class NotificationServiceImpl implements NotificationService {
         );
         log.info("Notificação de reagendamento enviada para consulta ID: {}",
                 consulta.getId().getValue());
+
+        HistoricoEventDTO historicoEvent = toHistoricoEventDTO(consulta, "REAGENDADA");
+        rabbitTemplate.convertAndSend(
+                RabbitConfig.EXCHANGE_NAME,
+                RabbitConfig.ROUTING_KEY_HISTORICO,
+                historicoEvent
+        );
+        log.info("Evento de histórico (REAGENDADA) enviado para consulta ID: {}",
+                consulta.getId().getValue());
     }
 
     private ConsultaDTO toDTO(Consulta consulta) {
@@ -60,6 +88,17 @@ public class NotificationServiceImpl implements NotificationService {
                 consulta.getMedicoId().getValue(),
                 consulta.getDataHora(),
                 consulta.getEspecialidade().getValue()
+        );
+    }
+
+    private HistoricoEventDTO toHistoricoEventDTO(Consulta consulta, String tipoEvento) {
+        return new HistoricoEventDTO(
+                consulta.getId().getValue(),
+                consulta.getPacienteId().getValue(),
+                consulta.getMedicoId().getValue(),
+                consulta.getDataHora(),
+                consulta.getEspecialidade().getValue(),
+                tipoEvento
         );
     }
 }

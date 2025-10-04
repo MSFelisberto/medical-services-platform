@@ -1,0 +1,660 @@
+{
+	"info": {
+		"_postman_id": "0abb0c6d-5d2c-4286-9bb1-40254ba036c7",
+		"name": "Medical Services Platform - Coleção de Testes",
+		"description": "Collection completa para testar todos os endpoints do MSP",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "29846211",
+		"_collection_link": "https://fiap-team.postman.co/workspace/FIAP---POS-TECH~807ac127-7790-42d7-97ff-4e7e33e8937b/collection/29846211-0abb0c6d-5d2c-4286-9bb1-40254ba036c7?action=share&source=collection_link&creator=29846211"
+	},
+	"item": [
+		{
+			"name": "01 - Autenticação",
+			"item": [
+				{
+					"name": "Login Admin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    var jsonData = pm.response.json();",
+									"    pm.collectionVariables.set(\"token_admin\", jsonData.token);",
+									"    pm.environment.set(\"token_admin\", jsonData.token);",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"admin@email.com\",\n    \"senha\": \"senha123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/autenticacao/auth/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"autenticacao",
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login Médico",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    var jsonData = pm.response.json();",
+									"    pm.collectionVariables.set(\"token_medico\", jsonData.token);",
+									"    pm.environment.set(\"token_medico\", jsonData.token);",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"medico@email.com\",\n    \"senha\": \"senha123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/autenticacao/auth/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"autenticacao",
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login Enfermeiro",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    var jsonData = pm.response.json();",
+									"    pm.collectionVariables.set(\"token_enfermeiro\", jsonData.token);",
+									"    pm.environment.set(\"token_enfermeiro\", jsonData.token);",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"enfermeiro@email.com\",\n    \"senha\": \"senha123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/autenticacao/auth/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"autenticacao",
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login Paciente",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    var jsonData = pm.response.json();",
+									"    pm.collectionVariables.set(\"token_paciente\", jsonData.token);",
+									"    pm.environment.set(\"token_paciente\", jsonData.token);",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"paciente@email.com\",\n    \"senha\": \"senha123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/autenticacao/auth/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"autenticacao",
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "02 - Pacientes",
+			"item": [
+				{
+					"name": "Cadastrar Paciente",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    var jsonData = pm.response.json();",
+									"    pm.collectionVariables.set(\"paciente_id\", jsonData.id);",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token_admin}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"paciente.novo@email.com\",\n    \"senha\": \"senha123456\",\n    \"nomeCompleto\": \"João Silva Santos\",\n    \"cpf\": \"12345678901\",\n    \"dataNascimento\": \"1990-05-15\",\n    \"telefone\": \"(11) 98765-4321\",\n    \"endereco\": {\n        \"logradouro\": \"Rua das Flores\",\n        \"numero\": \"123\",\n        \"complemento\": \"Apto 45\",\n        \"bairro\": \"Centro\",\n        \"cidade\": \"São Paulo\",\n        \"estado\": \"SP\",\n        \"cep\": \"01310-100\"\n    }\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/autenticacao/pacientes",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"autenticacao",
+								"pacientes"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "03 - Funcionários",
+			"item": [
+				{
+					"name": "Cadastrar Médico",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    var jsonData = pm.response.json();",
+									"    pm.collectionVariables.set(\"funcionario_id\", jsonData.id);",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token_admin}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"medico.novo@email.com\",\n    \"senha\": \"senha123456\",\n    \"tipo\": \"MEDICO\",\n    \"nomeCompleto\": \"Dr. Carlos Oliveira\",\n    \"cpf\": \"98765432100\",\n    \"crm\": \"CRM123456-SP\",\n    \"coren\": null,\n    \"especialidade\": {\n        \"nome\": \"Cardiologia\",\n        \"codigo\": \"CARD001\"\n    }\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/autenticacao/funcionarios",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"autenticacao",
+								"funcionarios"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Cadastrar Enfermeiro",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token_admin}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"enfermeiro.novo@email.com\",\n    \"senha\": \"senha123456\",\n    \"tipo\": \"ENFERMEIRO\",\n    \"nomeCompleto\": \"Maria Santos\",\n    \"cpf\": \"11122233344\",\n    \"crm\": null,\n    \"coren\": \"COREN654321-SP\",\n    \"especialidade\": null\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/autenticacao/funcionarios",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"autenticacao",
+								"funcionarios"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Buscar Funcionário por ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token_admin}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/autenticacao/funcionarios/{{funcionario_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"autenticacao",
+								"funcionarios",
+								"{{funcionario_id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "04 - Agendamento",
+			"item": [
+				{
+					"name": "Agendar Consulta",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    var jsonData = pm.response.json();",
+									"    pm.collectionVariables.set(\"consulta_id\", jsonData.id);",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token_medico}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"pacienteId\": 1,\n    \"medicoId\": 2,\n    \"dataHora\": \"2025-12-17T14:30:00\",\n    \"especialidade\": \"CARDIOLOGIA\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/agendamento",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"agendamento"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Reagendar Consulta",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token_medico}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"medicoId\": 2,\n    \"dataHora\": \"2025-12-20T15:00:00\",\n    \"especialidade\": \"CARDIOLOGIA\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/agendamento/{{consulta_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"agendamento",
+								"{{consulta_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Cancelar Consulta",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token_medico}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/agendamento/{{consulta_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"agendamento",
+								"{{consulta_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Listar Consultas por Paciente",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token_medico}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/agendamento/paciente/{{paciente_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"agendamento",
+								"paciente",
+								"{{paciente_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Listar Consultas - Paciente (próprio)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token_paciente}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/agendamento/paciente/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"agendamento",
+								"paciente",
+								"1"
+							]
+						},
+						"description": "Paciente só pode ver as próprias consultas"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "05 - Histórico (GraphQL)",
+			"item": [
+				{
+					"name": "Histórico por Paciente",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token_medico}}"
+							}
+						],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "query HistoricoPorPaciente($pacienteId: ID!) {\n  historicoPorPaciente(pacienteId: $pacienteId) {\n    id\n    consultaId\n    pacienteId\n    medicoId\n    dataHora\n    especialidade\n    status\n    observacoes\n    dataCriacao\n    dataAtualizacao\n  }\n}",
+								"variables": "{\n  \"pacienteId\": \"{{paciente_id}}\"\n}"
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/historico/graphql",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"historico",
+								"graphql"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Histórico por Consulta",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token_medico}}"
+							}
+						],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "query HistoricoPorConsulta($consultaId: ID!) {\n  historicoPorConsulta(consultaId: $consultaId) {\n    id\n    consultaId\n    pacienteId\n    medicoId\n    dataHora\n    especialidade\n    status\n    observacoes\n    dataCriacao\n    dataAtualizacao\n  }\n}",
+								"variables": "{\n  \"consultaId\": \"{{consulta_id}}\"\n}"
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/historico/graphql",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"historico",
+								"graphql"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Histórico - Paciente (próprio)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token_paciente}}"
+							}
+						],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "query HistoricoPorPaciente($pacienteId: ID!) {\n  historicoPorPaciente(pacienteId: $pacienteId) {\n    id\n    consultaId\n    dataHora\n    especialidade\n    status\n    observacoes\n  }\n}",
+								"variables": "{\n  \"pacienteId\": \"{{paciente_id}}\"\n}"
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/historico/graphql",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"historico",
+								"graphql"
+							]
+						},
+						"description": "Paciente consultando próprio histórico"
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8080",
+			"type": "string"
+		},
+		{
+			"key": "token_admin",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "token_medico",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "token_enfermeiro",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "token_paciente",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "paciente_id",
+			"value": "1",
+			"type": "string"
+		},
+		{
+			"key": "funcionario_id",
+			"value": "1",
+			"type": "string"
+		},
+		{
+			"key": "consulta_id",
+			"value": "1",
+			"type": "string"
+		}
+	]
+}

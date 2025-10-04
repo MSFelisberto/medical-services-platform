@@ -1,13 +1,17 @@
 type Query {
-    historicoPorPaciente(pacienteId: ID!): [HistoricoConsulta]
-    historicoPorId(id: ID!): HistoricoConsulta
+    historicoPorPaciente(pacienteId: ID!): [HistoricoConsulta!]!
+    historicoPorConsulta(consultaId: ID!): HistoricoConsulta
 }
 
 type HistoricoConsulta {
     id: ID!
-    dataRealizacao: String
-    especialidade: String
-    diagnostico: String
-    prescricao: String
+    consultaId: ID!
+    pacienteId: ID!
+    medicoId: ID!
+    dataHora: String!
+    especialidade: String!
+    status: String!
     observacoes: String
+    dataCriacao: String!
+    dataAtualizacao: String!
 }
