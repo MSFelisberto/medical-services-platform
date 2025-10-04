@@ -20,7 +20,7 @@ Desenvolvido por:
 - Marcos da Silva Felisberto 
 - Heider Bezerra Soares
 - Fernando Bertolo
-- Leonardo Mattioli]
+- Leonardo Mattioli
 
 ### Principais Funcionalidades
 
