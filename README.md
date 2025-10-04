@@ -16,7 +16,11 @@ O **Medical Services Platform (MSP)** é um sistema hospitalar distribuído dese
 
 ## 👨‍💻 Desenvolvedores
 
-Desenvolvido por [Marcos da Silva Felisberto, Heider Bezerra Soares, Fernando Bertolo e Leonardo Mattioli] - Tech Challenge Fase 3 - FIAP Pós Tech
+Desenvolvido por: 
+- Marcos da Silva Felisberto 
+- Heider Bezerra Soares
+- Fernando Bertolo
+- Leonardo Mattioli]
 
 ### Principais Funcionalidades
 
