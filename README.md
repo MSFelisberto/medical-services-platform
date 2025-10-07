@@ -1,15 +1,3 @@
-## 📋 Sumário
-
-1. [Visão Geral](#vis%C3%A3o-geral)
-2. [Arquitetura do Sistema](#arquitetura-do-sistema)
-3. [Microsserviços](#microservi%C3%A7os)
-4. [Banco de Dados](#banco-de-dados)
-5. [Comunicação entre Serviços](#comunica%C3%A7%C3%A3o-entre-servi%C3%A7os)
-6. [Segurança](#seguran%C3%A7a)
-7. [Como Executar](#como-executar)
-8. [Como Testar](#como-testar)
-9. [Endpoints e APIs](#endpoints-e-apis)
-
 ## 🏥 Visão Geral
 
 O **Medical Services Platform (MSP)** é um sistema hospitalar distribuído desenvolvido com arquitetura de microsserviços, focado em gerenciar agendamentos de consultas médicas, histórico de pacientes e notificações automáticas. O sistema foi projetado seguindo os princípios de Domain-Driven Design (DDD), Clean Architecture e comunicação assíncrona.
