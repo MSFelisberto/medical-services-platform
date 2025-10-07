@@ -577,9 +577,9 @@ Location: /agendamento/1
 
 ---
 
-#### 2.2 Reagenda uma consulta existente.
-
 #### PUT `/{id}`
+
+Reagenda uma consulta existente.
 
 **Acesso:** Requer role `MEDICO` ou `ENFERMEIRO`
 
@@ -614,9 +614,10 @@ Location: /agendamento/1
 
 ---
 
-#### 2.3 Cancela uma consulta.
-
 #### DELETE `/{id}`
+
+Cancela uma consulta.
+
 
 **Acesso:** Requer role `MEDICO` ou `ENFERMEIRO`
 
@@ -629,9 +630,10 @@ Location: /agendamento/1
 
 ---
 
-#### 2.4 Lista todas as consultas de um paciente.
-
 #### GET `/paciente/{pacienteId}`
+
+Lista todas as consultas de um paciente.
+
 
 **Acesso:** Requer role `MEDICO`, `ENFERMEIRO` ou `PACIENTE`
 
