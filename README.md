@@ -17,10 +17,10 @@ O **Medical Services Platform (MSP)** é um sistema hospitalar distribuído dese
 ## 👨‍💻 Desenvolvedores
 
 Desenvolvido por: 
-- Marcos da Silva Felisberto 
-- Heider Bezerra Soares
-- Fernando Bertolo
-- Leonardo Mattioli
+- Marcos da Silva Felisberto - RM 364607
+- Heider Bezerra Soares - RM 361116
+- Fernando César Bertolo Júnior - RM 362127
+- Leonardo Doretto Mattioli - RM 363189
 
 ### Principais Funcionalidades
 
