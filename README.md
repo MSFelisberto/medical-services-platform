@@ -846,7 +846,7 @@ O Gateway injeta headers após validação do JWT:
 1. **Clone o repositório**
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/MSFelisberto/medical-services-platform
 cd medical-services-platform
 ```
 
