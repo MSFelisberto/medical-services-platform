@@ -2,6 +2,11 @@
 
 O **Medical Services Platform (MSP)** é um sistema hospitalar distribuído desenvolvido com arquitetura de microsserviços, focado em gerenciar agendamentos de consultas médicas, histórico de pacientes e notificações automáticas. O sistema foi projetado seguindo os princípios de Domain-Driven Design (DDD), Clean Architecture e comunicação assíncrona.
 
+## Repositório
+
+- [https://github.com/MSFelisberto/medical-services-platform](https://github.com/MSFelisberto/medical-services-platform)
+
+
 ## 👨‍💻 Desenvolvedores
 
 Desenvolvido por: 
