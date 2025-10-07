@@ -311,6 +311,492 @@ Headers: Authorization: Bearer {service-token}
 4. Histórico consome e registra evento
 ```
 
+### 3. Endpoints
+
+**Estrutura Base:**
+
+```
+http://localhost:8080/{microservice}/{endpoint}
+```
+
+**Microserviço de Autenticação**
+
+Base URL: `http://localhost:8080/autenticacao`
+
+
+#### 1.1 Autenticação de Usuários
+
+#### POST `/auth/login`
+
+Realiza login de usuários (pacientes e funcionários).
+
+**Acesso:** Público
+
+**Request Body:**
+
+```json
+{
+  "email": "string",
+  "senha": "string"
+}
+```
+
+**Response (200 OK):**
+
+```json
+{
+  "token": "string",
+  "type": "Bearer",
+  "expiresIn": 86400000,
+  "userType": "PACIENTE|MEDICO|ENFERMEIRO|ADMIN"
+}
+```
+
+---
+
+#### POST `/auth/service/token`
+
+Obtém token de autenticação para comunicação entre microserviços.
+
+**Acesso:** Interno (serviços)
+
+**Request Body:**
+
+```json
+{
+  "serviceId": "string",
+  "serviceSecret": "string"
+}
+```
+
+**Response (200 OK):**
+
+```json
+{
+  "token": "string",
+  "type": "Bearer",
+  "expiresIn": 3600000,
+  "userType": "SISTEMA"
+}
+```
+
+---
+
+#### 1.2 Gestão de Pacientes
+
+#### POST `/pacientes`
+
+Cadastra um novo paciente.
+
+**Acesso:** Requer role `ADMIN`
+
+**Request Body:**
+
+```json
+{
+  "email": "string",
+  "senha": "string (mínimo 6 caracteres)",
+  "nomeCompleto": "string (2-100 caracteres)",
+  "cpf": "string (11122233344 ou 111.222.333-44)",
+  "dataNascimento": "YYYY-MM-DD",
+  "telefone": "string ((11) 99999-9999)",
+  "endereco": {
+    "logradouro": "string (máx 200)",
+    "numero": "string (máx 10)",
+    "complemento": "string (máx 100) - opcional",
+    "bairro": "string (máx 100)",
+    "cidade": "string (máx 100)",
+    "estado": "string (2 caracteres - ex: SP)",
+    "cep": "string (12345-678 ou 12345678)"
+  }
+}
+```
+
+**Response (201 Created):**
+
+```json
+{
+  "id": 1,
+  "email": "string",
+  "nomeCompleto": "string",
+  "cpf": "string",
+  "dataNascimento": "YYYY-MM-DD",
+  "telefone": "string",
+  "endereco": {
+    "logradouro": "string",
+    "numero": "string",
+    "complemento": "string",
+    "bairro": "string",
+    "cidade": "string",
+    "estado": "string",
+    "cep": "string"
+  },
+  "ativo": true
+}
+```
+
+---
+
+#### 1.3 Gestão de Funcionários
+
+#### POST `/funcionarios`
+
+Cadastra um novo funcionário (médico, enfermeiro ou admin).
+
+**Acesso:** Requer role `ADMIN`
+
+**Request Body:**
+
+```json
+{
+  "email": "string",
+  "senha": "string (mínimo 6 caracteres)",
+  "tipo": "ADMIN|MEDICO|ENFERMEIRO",
+  "nomeCompleto": "string (2-100 caracteres)",
+  "cpf": "string (11122233344 ou 111.222.333-44)",
+  "crm": "string (máx 20) - obrigatório para MEDICO",
+  "coren": "string (máx 20) - obrigatório para ENFERMEIRO",
+  "especialidade": {
+    "nome": "string (máx 100) - obrigatório para MEDICO",
+    "codigo": "string (máx 10) - obrigatório para MEDICO"
+  }
+}
+```
+
+**Response (201 Created):**
+
+```json
+{
+  "id": 1,
+  "email": "string",
+  "tipo": "ADMIN|MEDICO|ENFERMEIRO",
+  "nomeCompleto": "string",
+  "cpf": "string",
+  "crm": "string",
+  "coren": "string",
+  "especialidade": {
+    "nome": "string",
+    "codigo": "string"
+  },
+  "ativo": true,
+  "dataCadastro": "2025-01-01T10:00:00"
+}
+```
+
+---
+
+#### GET `/funcionarios/{id}`
+
+Busca um funcionário por ID.
+
+**Acesso:** Requer role `ADMIN`
+
+**Response (200 OK):**
+
+```json
+{
+  "id": 1,
+  "email": "string",
+  "tipo": "ADMIN|MEDICO|ENFERMEIRO",
+  "nomeCompleto": "string",
+  "cpf": "string",
+  "crm": "string",
+  "coren": "string",
+  "especialidade": {
+    "nome": "string",
+    "codigo": "string"
+  },
+  "ativo": true,
+  "dataCadastro": "2025-01-01T10:00:00"
+}
+```
+
+---
+
+#### 1.4 Endpoints Internos
+
+#### GET `/internal/usuarios/pacientes/{pacienteId}/exists`
+
+Verifica se um paciente existe.
+
+**Acesso:** Interno (serviços com role `SISTEMA`)
+
+**Response (200 OK):**
+
+```json
+"true/false"
+```
+
+**Microserviço de Agendamento**
+
+Base URL: `http://localhost:8080/agendamento`
+
+#### 2.1 Gestão de Consultas
+
+#### POST `/`
+
+Agenda uma nova consulta.
+
+**Acesso:** Requer role `MEDICO` ou `ENFERMEIRO`
+
+**Request Body:**
+
+```json
+{
+  "pacienteId": 1,
+  "medicoId": 1,
+  "dataHora": "2025-12-31T14:00:00",
+  "especialidade": "string"
+}
+```
+
+**Validações:**
+
+- `dataHora` deve ser futura
+- `pacienteId` deve existir no sistema
+- Todos os campos são obrigatórios
+
+**Response (201 Created):**
+
+```json
+{
+  "id": 1,
+  "pacienteId": 1,
+  "medicoId": 1,
+  "dataHora": "2025-12-31T14:00:00",
+  "especialidade": "string",
+  "status": "AGENDADA"
+}
+```
+
+**Headers de Response:**
+
+```
+Location: /agendamento/1
+```
+
+---
+
+#### 2.2 Reagenda uma consulta existente.
+
+#### PUT `/{id}`
+
+**Acesso:** Requer role `MEDICO` ou `ENFERMEIRO`
+
+**Request Body:**
+
+```json
+{
+  "medicoId": 1,
+  "dataHora": "2025-12-31T15:00:00",
+  "especialidade": "string"
+}
+```
+
+**Validações:**
+
+- `dataHora` deve ser futura
+- Consulta não pode estar cancelada
+- Todos os campos são obrigatórios
+
+**Response (200 OK):**
+
+```json
+{
+  "id": 1,
+  "pacienteId": 1,
+  "medicoId": 1,
+  "dataHora": "2025-12-31T15:00:00",
+  "especialidade": "string",
+  "status": "AGENDADA"
+}
+```
+
+---
+
+#### 2.3 Cancela uma consulta.
+
+#### DELETE `/{id}`
+
+**Acesso:** Requer role `MEDICO` ou `ENFERMEIRO`
+
+**Validações:**
+
+- Consulta não pode já estar cancelada
+- Deve ter pelo menos 24h de antecedência
+
+**Response (204 No Content)**
+
+---
+
+#### 2.4 Lista todas as consultas de um paciente.
+
+#### GET `/paciente/{pacienteId}`
+
+**Acesso:** Requer role `MEDICO`, `ENFERMEIRO` ou `PACIENTE`
+
+**Autorização:**
+
+- Pacientes só podem visualizar suas próprias consultas
+- Médicos e enfermeiros podem visualizar qualquer consulta
+
+**Response (200 OK):**
+
+```json
+[
+  {
+    "id": 1,
+    "pacienteId": 1,
+    "medicoId": 1,
+    "dataHora": "2025-12-31T14:00:00",
+    "especialidade": "CARDIOLOGIA",
+    "status": "AGENDADA"
+  }
+]
+```
+
+**Microserviço de Historico**
+
+Base URL: `http://localhost:8080/historico`
+
+**Importante:** Este microserviço utiliza **GraphQL** em vez de REST.
+
+#### 3.1 Endpoint GraphQL
+
+#### POST `/graphql`
+
+Endpoint único para todas as queries GraphQL.
+
+**Acesso:** Requer role `MEDICO`, `ENFERMEIRO` ou `PACIENTE`
+
+**Content-Type:** `application/json`
+
+---
+
+#### 3.2 Queries Disponíveis
+
+#### historicoPorPaciente
+
+Retorna o histórico de consultas de um paciente.
+
+**Query:**
+
+```graphql
+query {
+  historicoPorPaciente(pacienteId: 1) {
+    id
+    consultaId
+    pacienteId
+    medicoId
+    dataHora
+    especialidade
+    status
+    observacoes
+    dataCriacao
+    dataAtualizacao
+  }
+}
+```
+
+**Autorização:**
+
+- Pacientes só podem visualizar seu próprio histórico
+- Médicos e enfermeiros podem visualizar qualquer histórico
+
+**Response:**
+
+```json
+{
+  "data": {
+    "historicoPorPaciente": [
+      {
+        "id": "1",
+        "consultaId": "1",
+        "pacienteId": "1",
+        "medicoId": "1",
+        "dataHora": "2025-12-31T14:00:00",
+        "especialidade": "CARDIOLOGIA",
+        "status": "AGENDADA",
+        "observacoes": null,
+        "dataCriacao": "2025-01-01T10:00:00",
+        "dataAtualizacao": "2025-01-01T10:00:00"
+      }
+    ]
+  }
+}
+```
+
+---
+
+#### historicoPorConsulta
+
+Retorna o histórico de uma consulta específica.
+
+**Query:**
+
+```graphql
+query {
+  historicoPorConsulta(consultaId: 1) {
+    id
+    consultaId
+    pacienteId
+    medicoId
+    dataHora
+    especialidade
+    status
+    observacoes
+    dataCriacao
+    dataAtualizacao
+  }
+}
+```
+
+**Acesso:** Requer role `MEDICO` ou `ENFERMEIRO`
+
+**Response:**
+
+```json
+{
+  "data": {
+    "historicoPorConsulta": {
+      "id": "1",
+      "consultaId": "1",
+      "pacienteId": "1",
+      "medicoId": "1",
+      "dataHora": "2025-12-31T14:00:00",
+      "especialidade": "CARDIOLOGIA",
+      "status": "AGENDADA",
+      "observacoes": null,
+      "dataCriacao": "2025-01-01T10:00:00",
+      "dataAtualizacao": "2025-01-01T10:00:00"
+    }
+  }
+}
+```
+
+## Autenticação e Autorização
+
+### 4 Como Usar os Endpoints Protegidos
+
+1. **Obter Token:**
+
+```bash
+curl -X POST http://localhost:8080/autenticacao/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "medico@email.com",
+    "senha": "senha123"
+  }'
+```
+
+2. **Usar Token nas Requisições:**
+
+```bash
+curl -X GET http://localhost:8080/agendamento/paciente/1 \
+  -H "Authorization: Bearer {seu-token-aqui}"
+```
+
+
 ## 🔐 Segurança
 
 ### Autenticação JWT

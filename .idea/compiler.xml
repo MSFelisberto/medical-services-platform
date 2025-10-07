@@ -18,9 +18,9 @@
         <processorPath useClasspath="false">
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.38/lombok-1.18.38.jar" />
         </processorPath>
+        <module name="agendamento" />
         <module name="autenticacao" />
         <module name="notificacoes" />
-        <module name="agendamento" />
       </profile>
       <profile name="Annotation profile for historico" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
